@@ -1,2 +1,2 @@
-# crc-contracts
-EVM Contracts for the Cross Rollup Communication Protocol
+# CRC Contracts
+EVM Contracts for the Cross Rollup Communication Protocol.
