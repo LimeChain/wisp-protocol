@@ -34,7 +34,7 @@ library SimpleSerialize {
         uint256 index,
         bytes32[] memory branch,
         bytes32 root
-    ) internal view returns (bool) {
+    ) internal pure returns (bool) {
         bytes32 restoredMerkleRoot = restoreMerkleRoot(leaf, index, branch);
         return root == restoredMerkleRoot;
     }
@@ -56,7 +56,8 @@ library SimpleSerialize {
         return bytes32(uint256(0x07 << 248)) | (sha256(abi.encode(forkVersion, genesisValidatorsRoot)) >> 32);
     }
 
-    function computeSigningRoot(BeaconBlockHeader memory header, bytes4 forkVersion, bytes32 genesisValidatorsRoot) internal view returns (bytes32) {
+    function computeSigningRoot(BeaconBlockHeader memory header, bytes4 forkVersion, bytes32 genesisValidatorsRoot)
+	internal pure returns (bytes32) {
         return sha256(bytes.concat(sszBeaconBlockHeader(header), computeDomain(forkVersion, genesisValidatorsRoot)));
     }
 }

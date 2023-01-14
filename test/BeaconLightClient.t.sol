@@ -4,7 +4,7 @@ import "ds-test/test.sol";
 import "forge-std/Vm.sol";
 import "forge-std/console.sol";
 import "forge-std/Script.sol";
-import "../BeaconLightClient.sol";
+import "../src/lightclient/BeaconLightClient.sol";
 
 contract BeaconLightClientTest is DSTest, Script {
     BeaconLightClient beaconLightClient;

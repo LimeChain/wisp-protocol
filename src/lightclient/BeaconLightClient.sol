@@ -5,7 +5,7 @@ import "./Structs.sol";
 import "./BLSAggregatedSignatureVerifier.sol";
 import "./PoseidonCommitmentVerifier.sol";
 import "./libraries/SimpleSerialize.sol";
-import "openzeppelin-contracts/access/Ownable.sol";
+import "openzeppelin-contracts/contracts/access/Ownable.sol";
 
 uint256 constant OPTIMISTIC_UPDATE_TIMEOUT = 86400;
 uint256 constant SLOTS_PER_EPOCH = 32;
