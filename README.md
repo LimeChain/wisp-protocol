@@ -1,5 +1,7 @@
 # CRC Protocol
 
+[![Tests](https://github.com/LimeChain/crc-protocol/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/LimeChain/crc-protocol/actions/workflows/ci.yml)
+
 ## Overview
 
 Messaging Protocol for transfer of data between Rollups based on Computational Integrity (SNARK/STARKs) proving the
