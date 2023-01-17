@@ -94,7 +94,7 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
     }
 
     /*
-    * @dev Set the sync committee validator set root for the next sync commitee period. This root is signed by the current
+    * @dev Set the sync committee validator set root for the next sync committee period. This root is signed by the current
     * sync committee. To make the proving cost of zkBLSVerify(..) cheaper, we map the ssz merkle root of the validators to a
     * poseidon merkle root (a zk-friendly hash function). In the case there is no finalization, we will keep track of the
     * best optimistic update. It can be finalized via forceUpdate(...).
