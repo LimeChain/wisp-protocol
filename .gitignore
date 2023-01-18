@@ -1,3 +1,4 @@
 /contracts/out/
 /contracts/cache/
 /circuits/node_modules
+/scripts/node_modules
