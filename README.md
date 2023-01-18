@@ -15,12 +15,12 @@ on [SuccinctLabs Proof-of-Consensus](https://github.com/succinctlabs/eth-proof-o
 To get started with this repo, you will need to have the following set up on your machine:
 
 - [Foundry](https://github.com/foundry-rs/foundry) to compile contracts and run Solidity tests
-- [Yarn](https://yarnpkg.com/) and [Node.js](https://nodejs.org/)
+- [NPM](https://www.npmjs.com/) and [Node.js](https://nodejs.org/)
 - [Circom](https://docs.circom.io/getting-started/installation/) in order to interact with the circuits
 
 ### Directory Structure
 
-The project is structured as a mixed Solidity, Circom, and Typescript workspace.
+The project is structured as a mixed Solidity, Circom, and TypeScript workspace.
 
 ```
 ├── circuits  // <-- Circom code
@@ -30,17 +30,19 @@ The project is structured as a mixed Solidity, Circom, and Typescript workspace.
 
 ### Setup
 
-TODO
+Circuits
+```bash
+cd ./circuits && npm i
+```
 
-0. `cd ./contracts`
-1. `forge install`
-2. `forge build`
-3. `forge test`
+Contracts
+```bash
+cd ./contracts && forge install && forge build
+```
 
-## Ethereum Light Client
+In order to run the tests for the contracts execute `forge test`
 
-TODO:
 
-- move different ZKPs to different folders within `circuits`
+TODOs
 - add top-level `./scripts` folder that has TS code to fetch input data and triggers the compilation of the circuits for
   a specific slot providing the input data along with it
