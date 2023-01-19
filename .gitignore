@@ -2,3 +2,5 @@
 /contracts/cache/
 /circuits/node_modules
 /scripts/node_modules
+/scripts/**/logs
+/circuits/**/build
