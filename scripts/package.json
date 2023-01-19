@@ -9,6 +9,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@chainsafe/ssz": "^0.10.0",
+    "@noble/bls12-381": "^1.4.0",
     "axios": "^1.2.3",
     "minimist": "^1.2.7",
     "ts-node": "^10.9.1",
