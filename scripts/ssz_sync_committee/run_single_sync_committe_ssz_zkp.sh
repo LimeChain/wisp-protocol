@@ -45,18 +45,20 @@ run () {
       mkdir "$SYNC_COMMITTEE_PROOF"
   fi
 
-  echo "**** COMPILING CIRCUIT $CIRCUIT_NAME.circom ****"
+  if [ ! -f "$COMPILED_DIR"/"$CIRCUIT_NAME".r1cs ]; then
+      echo "**** COMPILING CIRCUIT $CIRCUIT_NAME.circom ****"
+      start=`date +%s`
+#      circom "$CIRCUIT_PATH" --O1 --r1cs --sym --c --output "$COMPILED_DIR"
+      end=`date +%s`
+      echo "DONE ($((end-start))s)"
+  fi
+
+  echo "====GENERATING INPUT FOR PROOF===="
+  echo $SYNC_COMMITTEE_PROOF/input.json
   start=`date +%s`
-  circom "$CIRCUIT_PATH" --O1 --r1cs --sym --c --output "$COMPILED_DIR"
+#  yarn ts-node --project tsconfig.json ./ssz_sync_committee/generateProofInput.ts --period ${SYNC_COMMITTEE_PERIOD}
   end=`date +%s`
   echo "DONE ($((end-start))s)"
-
-#  echo "====GENERATING INPUT FOR PROOF===="
-#  echo $SYNC_COMMITTEE_PROOF/input.json
-#  start=`date +%s`
-#  yarn ts-node --project tsconfig.json generateProofInput.ts --period ${SYNC_COMMITTEE_PERIOD}
-#  end=`date +%s`
-#  echo "DONE ($((end-start))s)"
 }
 
 mkdir -p logs
