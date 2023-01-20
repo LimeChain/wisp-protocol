@@ -4,3 +4,4 @@
 /scripts/node_modules
 /scripts/**/logs
 /circuits/**/build
+/circuits/**/proof_data_**/
