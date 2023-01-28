@@ -1,5 +1,8 @@
 import {PointG1} from "@noble/bls12-381";
 
+const N: number = 55; // The number of bits to use per register
+const K: number = 7; // The number of registers
+
 export namespace Utils {
 	export function remove0x(str: string): string {
 		if (str.startsWith("0x")) {
@@ -33,15 +36,15 @@ export namespace Utils {
 		return [x.value, y.value];
 	}
 
-	export function bigIntToArray(n: number, k: number, x: bigint) {
+	export function bigIntToArray(x: bigint) {
 		let mod: bigint = 1n;
-		for (let idx = 0; idx < n; idx++) {
+		for (let idx = 0; idx < N; idx++) {
 			mod = mod * 2n;
 		}
 
 		let ret: string[] = [];
 		let x_temp: bigint = x;
-		for (let idx = 0; idx < k; idx++) {
+		for (let idx = 0; idx < K; idx++) {
 			ret.push((x_temp % mod).toString());
 			x_temp = x_temp / mod;
 		}
