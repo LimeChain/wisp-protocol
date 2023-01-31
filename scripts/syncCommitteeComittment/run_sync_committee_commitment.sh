@@ -68,7 +68,7 @@ run() {
   end=$(date +%s)
   echo "DONE ($((end - start))s)"
 
-  echo "====Generate Witness for Sample Input===="
+  echo "====Generate Witness===="
   start=$(date +%s)
   "$COMPILED_DIR"/"$CIRCUIT_NAME"_cpp/"$CIRCUIT_NAME" "$SYNC_COMMITTEE_PROOF"/input.json "$COMPILED_DIR"/"$CIRCUIT_NAME"_cpp/witness.wtns
   end=$(date +%s)
@@ -82,75 +82,50 @@ run() {
   fi
 
   # Generates circuit-specific trusted setup if it doesn't exist.
-  # This step might take a while.
+  # This step takes a while.
   if test ! -f "$TRUSTED_SETUP_DIR/vkey.json"; then
-    echo "****GENERATING ZKEY 0****"
-    start=`date +%s`
-    node --trace-gc --trace-gc-ignore-scavenger --max-old-space-size=2048000 --initial-old-space-size=2048000
-    --no-global-gc-scheduling --no-incremental-marking --max-semi-space-size=1024 --initial-heap-size=2048000
-    --expose-gc ../node_modules/snarkjs/cli.js groth16 setup "$COMPILED_DIR"/"$CIRCUIT_NAME".r1cs "$PHASE1"
-    "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME"_p1.zkey
-    end=`date +%s`
-    echo "DONE ($((end-start))s)"
-
-    echo "****GENERATING FINAL ZKEY****"
-    start=`date +%s`
-    node --max-old-space-size=2048000 ../node_modules/snarkjs/cli.js zkey beacon
-    "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME"_p1.zkey "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey
-    0102030405060708090a0b0c0d0e0f101112231415161718221a1b1c1d1e1f 10 -n="Final Beacon phase2"
-    end=`date +%s`
-    echo "DONE ($((end-start))s)"
-
-    echo "====GENERATING ZKEY 0===="
+    echo "====Generating zkey===="
     start=$(date +%s)
-    node --trace-gc --trace-gc-ignore-scavenger --max-old-space-size=2048000 --initial-old-space-size=2048000
-    --no-global-gc-scheduling --no-incremental-marking --max-semi-space-size=1024 --initial-heap-size=2048000
-    --expose-gc ../node_modules/snarkjs/cli.js zkey new "$COMPILED_DIR"/"$CIRCUIT_NAME".r1cs "$PHASE1"
-    "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME"_p1.zkey
+    node --trace-gc --trace-gc-ignore-scavenger --max-old-space-size=2048000 --initial-old-space-size=2048000 --no-global-gc-scheduling --no-incremental-marking --max-semi-space-size=1024 --initial-heap-size=2048000 --expose-gc ../node_modules/snarkjs/cli.js zkey new "$COMPILED_DIR"/"$CIRCUIT_NAME".r1cs "$PHASE1" "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME"_p1.zkey
     end=$(date +%s)
     echo "DONE ($((end - start))s)"
 
     echo "====Contribute to Phase2 Ceremony===="
     start=$(date +%s)
-    node ../node_modules/snarkjs/cli.js zkey contribute "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME"_p1.zkey
-    "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey
-    -n="First phase2 contribution" -e=$(date +%s)
+    node ../node_modules/snarkjs/cli.js zkey contribute "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME"_p1.zkey "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey -n="First phase2 contribution" -e="some random text for entropy"
     end=$(date +%s)
     echo "DONE ($((end - start))s)"
 
     echo "====VERIFYING FINAL ZKEY===="
     start=$(date +%s)
-    node --trace-gc --trace-gc-ignore-scavenger --max-old-space-size=2048000 --initial-old-space-size=2048000
-    --no-global-gc-scheduling --no-incremental-marking --max-semi-space-size=1024 --initial-heap-size=2048000
-    --expose-gc ../node_modules/snarkjs/cli.js zkey verify "$COMPILED_DIR"/"$CIRCUIT_NAME".r1cs "$PHASE1"
-    "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey
+    node --trace-gc --trace-gc-ignore-scavenger --max-old-space-size=2048000 --initial-old-space-size=2048000 --no-global-gc-scheduling --no-incremental-marking --max-semi-space-size=1024 --initial-heap-size=2048000 --expose-gc ../node_modules/snarkjs/cli.js zkey verify "$COMPILED_DIR"/"$CIRCUIT_NAME".r1cs "$PHASE1" "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey
     end=$(date +%s)
     echo "DONE ($((end - start))s)"
 
     echo "====EXPORTING VKEY===="
     start=$(date +%s)
-    node ../node_modules/snarkjs/cli.js zkey export verificationkey "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey
-    "$TRUSTED_SETUP_DIR"/vkey.json
+    node ../node_modules/snarkjs/cli.js zkey export verificationkey "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey "$TRUSTED_SETUP_DIR"/vkey.json
     end=$(date +%s)
     echo "DONE ($((end - start))s)"
   fi
 
-  echo "====GENERATING PROOF FOR SAMPLE INPUT===="
+  echo "====GENERATING PROOF FOR SYNC COMMITTEE PERIOD===="
+  # TODO use rapidsnark in order for it to be faster
   start=$(date +%s)
-  yarn snarkjs groth16 prove "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey "$COMPILED_DIR"/"$CIRCUIT_NAME"_cpp/witness.wtns "$SYNC_COMMITTEE_PROOF"/proof.json "$SYNC_COMMITTEE_PROOF"/public.json
+  node ../node_modules/snarkjs/cli.js groth16 prove "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey "$COMPILED_DIR"/"$CIRCUIT_NAME"_cpp/witness.wtns "$SYNC_COMMITTEE_PROOF"/proof.json "$SYNC_COMMITTEE_PROOF"/public.json
   end=$(date +%s)
   echo "DONE ($((end - start))s)"
 
-  echo "****VERIFYING PROOF FOR SAMPLE INPUT****"
+  echo "====VERIFYING PROOF FOR SYNC COMMITTEE PERIOD===="
   start=$(date +%s)
-  yarn snarkjs groth16 verify "$TRUSTED_SETUP_DIR"/vkey.json ./$SYNC_COMMITTEE_PROOF/input.json "$SYNC_COMMITTEE_PROOF"/proof.json
+  node ../node_modules/snarkjs/cli.js groth16 verify "$TRUSTED_SETUP_DIR"/vkey.json ./"$SYNC_COMMITTEE_PROOF"/input.json "$SYNC_COMMITTEE_PROOF"/proof.json
   end=$(date +%s)
   echo "DONE ($((end - start))s)"
 
   # Outputs calldata for the verifier contract.
-  echo "****GENERATING CALLDATA FOR VERIFIER CONTRACT****"
+  echo "====GENERATING CALLDATA FOR VERIFIER CONTRACT===="
   start=$(date +%s)
-  yarn snarkjs zkey export soliditycalldata $SYNC_COMMITTEE_PROOF/public.json "$SYNC_COMMITTEE_PROOF"/proof.json >"$SYNC_COMMITTEE_PROOF"/calldata.txt
+  node ../node_modules/snarkjs/cli.js zkey export soliditycalldata $SYNC_COMMITTEE_PROOF/public.json "$SYNC_COMMITTEE_PROOF"/proof.json >"$SYNC_COMMITTEE_PROOF"/calldata.txt
   end=$(date +%s)
   echo "DONE ($((end - start))s)"
 
