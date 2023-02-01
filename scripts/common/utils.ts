@@ -1,4 +1,4 @@
-import {PointG1} from "@noble/bls12-381";
+import {PointG1, PointG2} from "@noble/bls12-381";
 
 const N: number = 55; // The number of bits to use per register
 const K: number = 7; // The number of registers
@@ -49,5 +49,36 @@ export namespace Utils {
 			x_temp = x_temp / mod;
 		}
 		return ret;
+	}
+
+	export function sigHexAsSnarkInput(
+		signatureHex: string,
+		returnType: "array" | "hex" = "array"
+	) {
+		const sig = PointG2.fromSignature(remove0x(signatureHex));
+		sig.assertValidity();
+		if (returnType === "hex") {
+			return [
+				[
+					"0x" + sig.toAffine()[0].c0.value.toString(16),
+					"0x" + sig.toAffine()[0].c1.value.toString(16),
+				],
+				[
+					"0x" + sig.toAffine()[1].c0.value.toString(16),
+					"0x" + sig.toAffine()[1].c1.value.toString(16),
+				],
+			];
+		} else {
+			return [
+				[
+					bigIntToArray(sig.toAffine()[0].c0.value),
+					bigIntToArray(sig.toAffine()[0].c1.value),
+				],
+				[
+					bigIntToArray(sig.toAffine()[1].c0.value),
+					bigIntToArray(sig.toAffine()[1].c1.value),
+				],
+			];
+		}
 	}
 }

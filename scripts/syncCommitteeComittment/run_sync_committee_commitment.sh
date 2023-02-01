@@ -50,7 +50,7 @@ run() {
   echo "====GENERATING INPUT FOR PROOF===="
   echo $SYNC_COMMITTEE_PROOF/input.json
   start=$(date +%s)
-  yarn ts-node --project tsconfig.json ./syncCommitteeComittment/generateProofInput.ts --period ${SYNC_COMMITTEE_PERIOD}
+  yarn ts-node --project tsconfig.json ./syncCommitteeComittment/generate-proof-input.ts --period ${SYNC_COMMITTEE_PERIOD}
   end=$(date +%s)
   echo "DONE ($((end - start))s)"
 

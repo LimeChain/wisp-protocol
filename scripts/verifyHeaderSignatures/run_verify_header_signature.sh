@@ -51,7 +51,7 @@ run() {
   echo "====GENERATING INPUT FOR PROOF===="
   echo $SLOT_PROOF/input.json
   start=$(date +%s)
-  yarn ts-node --project tsconfig.json ./verifyHeaderSignatures/generateProofInput.ts --slot $SLOT
+  yarn ts-node --project tsconfig.json ./verifyHeaderSignatures/generate-proof-input.ts --slot $SLOT
   end=$(date +%s)
   echo "DONE ($((end - start))s)"
 

@@ -1,7 +1,7 @@
 const minimist = require("minimist");
 const fs = require('fs');
 import {aggregatePublicKeys} from "@noble/bls12-381";
-import {SyncCommittee} from "../common/SyncCommittee";
+import {SyncCommittee} from "../common/sync-committee";
 
 const SLOTS_PER_SYNC_COMMITTEE_PERIOD = 8192
 
@@ -44,5 +44,5 @@ if (!committeePeriod) {
 	throw new Error("CLI arg 'committee_period' is required!")
 }
 
-// usage: yarn ts-node generateProofInput.ts --period=495
+// usage: yarn ts-node generate-proof-input.ts --period=495
 generateProofInput(committeePeriod)
