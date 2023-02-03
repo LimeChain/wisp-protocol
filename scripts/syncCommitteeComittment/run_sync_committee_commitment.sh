@@ -55,7 +55,7 @@ run() {
   echo "DONE ($((end - start))s)"
 
   if [ ! -f "$COMPILED_DIR"/"$CIRCUIT_NAME".r1cs ]; then
-    echo "**** COMPILING CIRCUIT $CIRCUIT_NAME.circom ****"
+    echo "==== COMPILING CIRCUIT $CIRCUIT_NAME.circom ===="
     start=$(date +%s)
     circom "$CIRCUIT_PATH" --O1 --r1cs --sym --c --output "$COMPILED_DIR"
     end=$(date +%s)
