@@ -1,28 +1,32 @@
 import {Utils} from "./utils";
 import {PointG1} from "@noble/bls12-381";
 import {BeaconChainAPI} from "./beacon-chain-api";
+import {PublicKey }  from "@chainsafe/bls/blst-native";
+import {fromHexString} from "@chainsafe/ssz";
 
 export namespace SyncCommittee {
 
 	export async function getValidatorsPubKey(slot: number) {
 		const committeePubKeys = await BeaconChainAPI.getSyncCommitteePubKeys(slot);
 
-		const pubKeys = [];
+		const pubKeys: PublicKey[] = [];
+		const pubKeysInt = [];
 		const pubKeysHex = [];
 		for (let i = 0; i < committeePubKeys.length; i++) {
 			const pubKey = committeePubKeys[i];
 			const point = PointG1.fromHex(pubKey);
 			const bigInts = Utils.pointToBigInt(point);
-			pubKeys.push([
+			pubKeysInt.push([
 				Utils.bigIntToArray(bigInts[0]),
 				Utils.bigIntToArray(bigInts[1])
 			]);
 			pubKeysHex.push(Utils.hexToIntArray(pubKey));
+			pubKeys.push(PublicKey.fromBytes(fromHexString(pubKey)))
 		}
 
 		return {
-			pubKeysString: committeePubKeys,
-			pubKeysInt: pubKeys,
+			pubKeys: pubKeys,
+			pubKeysInt: pubKeysInt,
 			pubKeysHex: pubKeysHex
 		}
 	}
@@ -35,7 +39,7 @@ export namespace SyncCommittee {
 			uint8Bits = padBitsToUint8Length(uint8Bits);
 			aggregatedBitsString = aggregatedBitsString.concat(uint8Bits.split('').reverse());
 		}
-		return aggregatedBitsString.map(bit => Number(bit));
+		return aggregatedBitsString.map(bit => { return !!Number(bit) });
 	}
 
 	function padBitsToUint8Length(str: string): string {

@@ -1,5 +1,5 @@
-const minimist = require("minimist");
-const fs = require('fs');
+import minimist from "minimist";
+import fs from 'fs';
 import {aggregatePublicKeys} from "@noble/bls12-381";
 import {SyncCommittee} from "../common/sync-committee";
 
@@ -14,7 +14,7 @@ async function generateProofInput(period: string) {
 
 	const slot = Number(period) * SLOTS_PER_SYNC_COMMITTEE_PERIOD;
 	const result = await SyncCommittee.getValidatorsPubKey(slot);
-	const aggregatePubKeyBytes = aggregatePublicKeys(result.pubKeysString);
+	const aggregatePubKeyBytes = aggregatePublicKeys(result.pubKeys.map(e => e.toBytes()));
 	const aggregatePubKeyHex: string[] = [];
 	aggregatePubKeyBytes.forEach(v => aggregatePubKeyHex.push(v.toString()));
 	const proofInput = {

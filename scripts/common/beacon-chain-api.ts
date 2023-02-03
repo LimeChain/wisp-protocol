@@ -13,21 +13,22 @@ export namespace BeaconChainAPI {
 	export async function getSyncCommitteePubKeys(slot: number) {
 		const result = await axios.get(`${BEACON_API_V1}states/${slot}/sync_committees`);
 		const committee = result.data.data.validators;
-
 		const url = `${BEACON_API_V1}states/${slot}/validators?id=`;
-		const committeePubKeys = [];
+		const validator2PubKey = new Map<string, string>();
 		for (let i = 0; i < Math.ceil(committee.length / PUB_KEY_BATCH_SIZE); i++) {
 			const validatorIndices = committee.slice(i * PUB_KEY_BATCH_SIZE, (i + 1) * PUB_KEY_BATCH_SIZE);
 			const resp = await axios.get(url + validatorIndices.toString());
 			const validatorsBatchInfo = resp.data.data;
 			for (let index in validatorsBatchInfo) {
-				committeePubKeys.push(Utils.remove0x(validatorsBatchInfo[index]['validator']['pubkey']));
+				const validatorIndex = validatorsBatchInfo[index]['index'];
+				const validatorPubKey = Utils.remove0x(validatorsBatchInfo[index]['validator']['pubkey']);
+				validator2PubKey.set(validatorIndex, validatorPubKey)
 			}
 		}
-		return committeePubKeys;
+		return committee.map((validatorIndex: string) => validator2PubKey.get(validatorIndex));
 	}
 
-	export async function getBeaconBlockHeader(slotN: number) {
+	export async function getBeaconBlockHeader(slotN: number): Promise<BeaconBlockHeader> {
 		const result = await axios.get(BEACON_BLOCK_HEADER + slotN);
 		const {slot, proposer_index, parent_root, state_root, body_root} = result.data.data.header.message;
 		return {slot, proposer_index, parent_root, state_root, body_root};
@@ -55,4 +56,12 @@ export namespace BeaconChainAPI {
 		const result = await axios.get(BEACON_API_V1 + `states/${slot}/fork`);
 		return result.data.data['current_version'];
 	}
+}
+
+export type BeaconBlockHeader = {
+	slot: number
+	proposer_index: number
+	parent_root: string
+	state_root: string
+	body_root: string
 }

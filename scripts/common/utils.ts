@@ -53,32 +53,18 @@ export namespace Utils {
 
 	export function sigHexAsSnarkInput(
 		signatureHex: string,
-		returnType: "array" | "hex" = "array"
 	) {
 		const sig = PointG2.fromSignature(remove0x(signatureHex));
 		sig.assertValidity();
-		if (returnType === "hex") {
-			return [
-				[
-					"0x" + sig.toAffine()[0].c0.value.toString(16),
-					"0x" + sig.toAffine()[0].c1.value.toString(16),
-				],
-				[
-					"0x" + sig.toAffine()[1].c0.value.toString(16),
-					"0x" + sig.toAffine()[1].c1.value.toString(16),
-				],
-			];
-		} else {
-			return [
-				[
-					bigIntToArray(sig.toAffine()[0].c0.value),
-					bigIntToArray(sig.toAffine()[0].c1.value),
-				],
-				[
-					bigIntToArray(sig.toAffine()[1].c0.value),
-					bigIntToArray(sig.toAffine()[1].c1.value),
-				],
-			];
-		}
+		return [
+			[
+				bigIntToArray(sig.toAffine()[0].c0.value),
+				bigIntToArray(sig.toAffine()[0].c1.value),
+			],
+			[
+				bigIntToArray(sig.toAffine()[1].c0.value),
+				bigIntToArray(sig.toAffine()[1].c1.value),
+			],
+		];
 	}
 }

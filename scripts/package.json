@@ -6,9 +6,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "type": "module",
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@chainsafe/bls": "^7.1.1",
+    "@chainsafe/ssz": "^0.10.1",
     "@noble/bls12-381": "^1.4.0",
     "axios": "^1.2.3",
     "ethers": "^5.7.2",
@@ -16,6 +19,7 @@
     "snarkjs": "^0.5.0"
   },
   "devDependencies": {
+    "@chainsafe/blst": "^0.2.4",
     "@types/minimist": "^1.2.2",
     "@types/node": "^18.11.18",
     "ts-node": "^10.9.1",

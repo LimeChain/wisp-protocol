@@ -1,10 +1,11 @@
 import {BeaconChainAPI} from "../common/beacon-chain-api";
 import {Utils} from "../common/utils";
 import {SyncCommittee} from "../common/sync-committee";
-
-const {ethers} = require('ethers');
-const minimist = require("minimist");
-const fs = require("fs");
+import {bls, PublicKey} from "@chainsafe/bls/blst-native";
+import {BitArray, fromHexString} from "@chainsafe/ssz";
+import {ethers} from "ethers";
+import minimist from "minimist";
+import fs from "fs";
 
 async function generateProofInput(slotStr: string) {
 	console.log(`Generating Input data for proving that slot: ${slotStr}`);
@@ -12,7 +13,7 @@ async function generateProofInput(slotStr: string) {
 		throw new Error('Slot is invalid. Must be `latest` or number');
 	}
 	const slot = Number(slotStr);
-	const result = await SyncCommittee.getValidatorsPubKey(slot);
+	const committee = await SyncCommittee.getValidatorsPubKey(slot);
 	const beaconBlockHeader = await BeaconChainAPI.getBeaconBlockHeader(slot);
 	const syncCommitteeAggregateData = await BeaconChainAPI.getSyncCommitteeAggregateData(slot);
 	const genesisValidatorRoot = await BeaconChainAPI.getGenesisValidatorRoot();
@@ -20,12 +21,12 @@ async function generateProofInput(slotStr: string) {
 	const signingRoot = computeSigningRoot(forkVersion, genesisValidatorRoot, beaconBlockHeader);
 	const syncCommitteeBits = SyncCommittee.getSyncCommitteeBits(syncCommitteeAggregateData.sync_committee_bits);
 
-	// TODO verify the provided signature against the claimed aggregated pub key
+	await verifyBLSSignature(ethers.utils.arrayify(signingRoot), committee.pubKeys, syncCommitteeAggregateData.sync_committee_signature, syncCommitteeBits)
 
 	const proofInput = {
-		signing_root: signingRoot,
-		pubkeys: result.pubKeysInt,
-		pubkeybits: syncCommitteeBits,
+		signing_root: Utils.hexToIntArray(signingRoot),
+		pubkeys: committee.pubKeysInt,
+		pubkeybits: syncCommitteeBits.map(e => { return e ? 1: 0}),
 		signature: Utils.sigHexAsSnarkInput(syncCommitteeAggregateData.sync_committee_signature)
 	}
 
@@ -42,12 +43,21 @@ async function generateProofInput(slotStr: string) {
 	console.log("Finished writing proof input file", file);
 }
 
-function computeSigningRoot(forkVersion: string, genesisValidatorRoot: string, beaconBlock: any): string[] {
+async function verifyBLSSignature(signingRoot: Uint8Array, pubKeys: PublicKey[], aggregateSyncCommitteeSignature: string, bitmap: boolean[]) {
+	const bits = BitArray.fromBoolArray(bitmap);
+	const activePubKeys = bits.intersectValues<PublicKey>(pubKeys);
+	const aggPubkey = bls.PublicKey.aggregate(activePubKeys);
+	const sig = bls.Signature.fromBytes(fromHexString(aggregateSyncCommitteeSignature), undefined, true);
+	const success = sig.verify(aggPubkey, signingRoot);
+
+	// TODO for some reason BLS sig verification does not go through
+	console.log("Successful BLS Signature verification: ", success);
+}
+
+function computeSigningRoot(forkVersion: string, genesisValidatorRoot: string, beaconBlock: any): string {
 	const sszHeader = sszBeaconBlockHeader(beaconBlock);
 	const domain = computeDomain(forkVersion, genesisValidatorRoot);
-	return Utils.hexToIntArray(
-		ethers.utils.sha256(Buffer.concat([ethers.utils.arrayify(sszHeader), domain]))
-	);
+	return ethers.utils.sha256(Buffer.concat([ethers.utils.arrayify(sszHeader), domain]));
 }
 
 function sszBeaconBlockHeader(beaconBlock: any) {
