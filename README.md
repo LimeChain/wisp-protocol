@@ -87,3 +87,7 @@ cd ./verifyHeaderSignatures && SLOT={INPUT} bash run_verify_header_signatures.sh
 
 Start the processes in the background since it might take a while depending on whether you've compiled / generated the
 zkey. A `logs` folder for the execution will be created.
+
+## License
+
+TODO
