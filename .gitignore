@@ -1,7 +1,9 @@
 /contracts/out/
 /contracts/cache/
-/circuits/node_modules
 /scripts/node_modules
 /scripts/**/logs
+/scripts/build/
+/circuits/node_modules
 /circuits/**/build
 /circuits/**/proof_data_**/
+/circuits/powers_of_tau/
