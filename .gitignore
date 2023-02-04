@@ -7,3 +7,4 @@
 /circuits/**/build
 /circuits/**/proof_data_**/
 /circuits/powers_of_tau/
+MyLogFile.log
