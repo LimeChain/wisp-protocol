@@ -110,9 +110,8 @@ run() {
   fi
 
   echo "====GENERATING PROOF FOR SYNC COMMITTEE PERIOD===="
-  # TODO use rapidsnark in order for it to be faster
   start=$(date +%s)
-  node ../node_modules/snarkjs/cli.js groth16 prove "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey "$COMPILED_DIR"/"$CIRCUIT_NAME"_cpp/witness.wtns "$SYNC_COMMITTEE_PROOF"/proof.json "$SYNC_COMMITTEE_PROOF"/public.json
+  ../build/prover "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey "$COMPILED_DIR"/"$CIRCUIT_NAME"_cpp/witness.wtns "$SYNC_COMMITTEE_PROOF"/proof.json "$SYNC_COMMITTEE_PROOF"/public.json
   end=$(date +%s)
   echo "DONE ($((end - start))s)"
 
