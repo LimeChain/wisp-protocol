@@ -115,11 +115,12 @@ run() {
   end=$(date +%s)
   echo "DONE ($((end - start))s)"
 
-  echo "====VERIFYING PROOF FOR SYNC COMMITTEE PERIOD===="
-  start=$(date +%s)
-  node ../node_modules/snarkjs/cli.js groth16 verify "$TRUSTED_SETUP_DIR"/vkey.json ./"$SYNC_COMMITTEE_PROOF"/input.json "$SYNC_COMMITTEE_PROOF"/proof.json
-  end=$(date +%s)
-  echo "DONE ($((end - start))s)"
+#  Bug in snarkjs. Error: Scalar size does not match. Verification goes through using the Verifier contract
+#  echo "====VERIFYING PROOF FOR SYNC COMMITTEE PERIOD===="
+#  start=$(date +%s)
+#  node ../node_modules/snarkjs/cli.js groth16 verify "$TRUSTED_SETUP_DIR"/vkey.json ./"$SYNC_COMMITTEE_PROOF"/input.json "$SYNC_COMMITTEE_PROOF"/proof.json
+#  end=$(date +%s)
+#  echo "DONE ($((end - start))s)"
 
   # Outputs calldata for the verifier contract.
   echo "====GENERATING CALLDATA FOR VERIFIER CONTRACT===="
