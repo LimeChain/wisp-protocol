@@ -15,7 +15,8 @@ async function generateProofInput(slotStr: string) {
 	const slot = Number(slotStr);
 	const committee = await SyncCommittee.getValidatorsPubKey(slot);
 	const beaconBlockHeader = await BeaconChainAPI.getBeaconBlockHeader(slot);
-	const syncCommitteeAggregateData = await BeaconChainAPI.getSyncCommitteeAggregateData(slot);
+	// Sync Committee Bitmask and Signatures for slot X are at slot x+1
+	const syncCommitteeAggregateData = await BeaconChainAPI.getSyncCommitteeAggregateData(slot + 1);
 	const genesisValidatorRoot = await BeaconChainAPI.getGenesisValidatorRoot();
 	const forkVersion = await BeaconChainAPI.getForkVersion(slot);
 	const signingRoot = computeSigningRoot(forkVersion, genesisValidatorRoot, beaconBlockHeader);
@@ -50,7 +51,6 @@ async function verifyBLSSignature(signingRoot: Uint8Array, pubKeys: PublicKey[],
 	const sig = bls.Signature.fromBytes(fromHexString(aggregateSyncCommitteeSignature), undefined, true);
 	const success = sig.verify(aggPubkey, signingRoot);
 
-	// TODO for some reason BLS sig verification does not go through
 	console.log("Successful BLS Signature verification: ", success);
 }
 
