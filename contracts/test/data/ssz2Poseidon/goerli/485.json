@@ -1,0 +1,17 @@
+{
+    "beaconBlockHeader": {
+        "slot": 3976608,
+        "proposerIndex": 71811,
+        "parentRoot": "0xb13d8834b1620b7215c078e97e664bcc1f0a55c58995b40a82973d39e9d338be",
+        "stateRoot": "0x268caa7b1c763f8cdaf048b18a8ba63d4e0000a712b06c5e2c632c1c72f3696f",
+        "bodyRoot": "0x8a622c2df9ed86bfb64eb113394b24567fc760e81d64f0aa78153b8fa1eec428"
+    },
+    "proof": {
+        "a": [],
+        "b": [
+            [],
+            []
+        ],
+        "c": []
+    }
+}

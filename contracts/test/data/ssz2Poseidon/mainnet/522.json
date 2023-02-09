@@ -1,12 +1,10 @@
 {
-    "lightClientUpdate": {
-        "finalizedHeader": {
-            "slot": 1,
-            "proposerIndex": 2,
-            "parentRoot": "TODO",
-            "stateRoot": "TODO",
-            "bodyRoot": "TODO"
-        }
+    "beaconBlockHeader": {
+        "slot": 4278368,
+        "proposerIndex": 71600,
+        "parentRoot": "0x2ca12c12ab22fdc9c4c7ca907463762562c954ef39467d9377456572462f167f",
+        "stateRoot": "0x57ca5e0e11791664cc7d4532041411da02239ef516799674bbd034e502bc53d8",
+        "bodyRoot": "0x153920f52c152312e70b518cdabec37f35a2121cd31a944e5484c6641e4ba5c7"
     },
     "proof": {
         "a": [

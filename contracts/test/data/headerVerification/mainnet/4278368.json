@@ -1,0 +1,32 @@
+{
+    "beaconBlockHeader": {
+        "slot": 4278368,
+        "proposerIndex": 71600,
+        "parentRoot": "0x2ca12c12ab22fdc9c4c7ca907463762562c954ef39467d9377456572462f167f",
+        "stateRoot": "0x57ca5e0e11791664cc7d4532041411da02239ef516799674bbd034e502bc53d8",
+        "bodyRoot": "0x153920f52c152312e70b518cdabec37f35a2121cd31a944e5484c6641e4ba5c7"
+    },
+    "blsSignatureProof": {
+        "participation": 453,
+        "proof": {
+            "a": [
+                "0x1309c91fda5e5b7ebc391d115e130703605d7764107e9b2e62f799d6ae107da4",
+                "0x03d6de47b81ed21c2a3eec0c6dba34fd7890d2f547d8b95af5ec2f10a7392e4a"
+            ],
+            "b": [
+                [
+                    "0x08b47e4b1e8b8699bf429d6cd99e2e0a43370e8cc0b752f6432d860c9818489b",
+                    "0x2da62146c7fd023710b2e53984df16821112a87b36d34af32bc7f6954d4009d3"
+                ],
+                [
+                    "0x295b455f8819f3deca5f36d6212651152a9bee7462a615846edb7a9a2bf0ec3d",
+                    "0x05dd2dfbb34d75384d623f2cca0c8f5afb45ec027a661b363d13bb73567795b7"
+                ]
+            ],
+            "c": [
+                "0x20771cb15685793fe09732018b778661d19808a86f0ca709aab5306360e73b56",
+                "0x2e4e14132738a7540b068511579a85015c1c7caa22965f49386d41b7aeb9c6c1"
+            ]
+        }
+    }
+}
