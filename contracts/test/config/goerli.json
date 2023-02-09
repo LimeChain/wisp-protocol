@@ -1,0 +1,6 @@
+{
+    "genesisValidatorRoot": "TODO",
+    "genesisTime": 0,
+    "secondsPerSlot": 12,
+    "forkVersion": "TODO"
+}

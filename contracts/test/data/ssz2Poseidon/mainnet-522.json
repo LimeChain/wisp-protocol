@@ -1,0 +1,31 @@
+{
+    "lightClientUpdate": {
+        "finalizedHeader": {
+            "slot": 1,
+            "proposerIndex": 2,
+            "parentRoot": "TODO",
+            "stateRoot": "TODO",
+            "bodyRoot": "TODO"
+        }
+    },
+    "proof": {
+        "a": [
+            "0x29e1c7fd93bbc145a43ee930f09ab8416185689e53a04fb6f1e173a76ef2ec9c",
+            "0x014dfdc9f5ad14a61e32426b7ce7be239c0de607292ca4b2c03a688ce90db981"
+        ],
+        "b": [
+            [
+                "0x117bb56406ce3416a0f1b0251f93617dda3118c96f4e903669fe08daead126f9",
+                "0x28b9e67b54a5ef290faf0799b65f34a55f66445aa28d58f7bb1800c58cb93692"
+            ],
+            [
+                "0x1cee679cc0971551189a75223c2275d5f3099c4bc9e36f4a5d2aa7319d6003e6",
+                "0x01897ad6a04e89e8630629e7ea0abbf1082ca2d65035ca2e8d8ca27bad902981"
+            ]
+        ],
+        "c": [
+            "0x2b0a0253772749259fc787f6eedaf4ec4e39aaa15758238f9b4984ad7a0aa6ff",
+            "0x20403049acad7f75c1ba0643261005c163f19a6016391e3353465dc74150d3b8"
+        ]
+    }
+}
