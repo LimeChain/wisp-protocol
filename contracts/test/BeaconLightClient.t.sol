@@ -37,6 +37,12 @@ contract BeaconLightClientTest is Test {
 		lightClient.step(lcUpdate);
 	}
 
+	function testInvalidStepDueToMissingMajority() external {
+		LightClientUpdate memory lcUpdate = readLightClientUpdateTestData("goerli", "5032672");
+		vm.expectRevert("Not enough members of the sync committee signed");
+		lightClient.step(lcUpdate);
+	}
+
 	function readNetworkConfig(string memory network) public view
 	returns (bytes32 genesisValidatorRoot, uint256 genesisTime, uint256 secondsPerSlot, bytes4 forkVersion, uint256 period, bytes32 scRoot, bytes32 scpRoot){
 
