@@ -9,3 +9,4 @@
 /circuits/powers_of_tau/
 MyLogFile.log
 /contracts/.env
+/contracts/broadcast/
