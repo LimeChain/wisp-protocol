@@ -8,6 +8,7 @@ import "./../src/crc-messages/libraries/Types.sol";
 contract CRCOutboxTest is Test {
     event MessageSent(
         address indexed sender,
+        uint256 indexed destinationChainId,
         bytes32 indexed hash,
         uint256 messageIndex
     );
@@ -56,9 +57,14 @@ contract CRCOutboxTest is Test {
             )
         );
 
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
 
-        emit MessageSent(address(this), messageHash, 0);
+        emit MessageSent(
+            address(this),
+            message.destinationChainId,
+            messageHash,
+            0
+        );
         outbox.sendMessage(message);
 
         assertEq(outbox.outbox(0), messageHash);
