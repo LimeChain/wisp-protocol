@@ -4,7 +4,9 @@ out = 'out'
 libs = ['lib']
 
 [rpc_endpoints]
+goerli = "${GOERLI_RPC_URL}"
 optimism-goerli = "${OPTIMISM_GOERLI_RPC_URL}"
 
 [etherscan]
-optimism-goerli = { key = "${ETHERSCAN_API_KEY}" }
+goerli = { key = "${OPTIMISM_ETHERSCAN_API_KEY}" }
+optimism-goerli = { key = "${OPTIMISM_ETHERSCAN_API_KEY}" }

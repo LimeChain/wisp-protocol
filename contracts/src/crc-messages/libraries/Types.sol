@@ -20,4 +20,12 @@ library Types {
         uint256 deliveryFee; // Fee in wei that the sender will be locking as a reward for the first relayer that triggers the execution of the CRC delivery. Could be 0 if the Sender is willing to finalize it itself.
         bytes extra; // Arbitrary bytes that will be sent alongside the data for dapps to make sense of
     }
+
+    /**
+     * @notice Complete CRCMessage envelop including the sender. Used upon receiving of CRCMessages
+     */
+    struct CRCMessageEnvelope {
+        CRCMessage message; // CRC Message
+        address sender; // The sender of the message
+    }
 }
