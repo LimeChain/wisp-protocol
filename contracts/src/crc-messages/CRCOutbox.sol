@@ -16,6 +16,7 @@ contract CRCOutbox is ICRCOutbox {
 
     event MessageSent(
         address indexed sender,
+        uint256 indexed destinationChainId,
         bytes32 indexed hash,
         uint256 messageIndex
     );
@@ -58,7 +59,12 @@ contract CRCOutbox is ICRCOutbox {
         outbox.push(messageHash);
         indexOf[messageHash] = messageIndex;
 
-        emit MessageSent(msg.sender, messageHash, messageIndex);
+        emit MessageSent(
+            msg.sender,
+            message.destinationChainId,
+            messageHash,
+            messageIndex
+        );
 
         return messageHash;
     }
