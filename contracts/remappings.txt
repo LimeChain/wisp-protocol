@@ -1,5 +1,7 @@
-Solidity-RLP/=lib/Solidity-RLP/contracts/
-curve-merkle-oracle/=lib/curve-merkle-oracle/contracts/
+Solidity-RLP/=lib/extractoor-contracts/lib/Solidity-RLP/contracts/
 ds-test/=lib/forge-std/lib/ds-test/src/
+erc4626-tests/=lib/openzeppelin-contracts/lib/erc4626-tests/
+extractoor-contracts/=lib/extractoor-contracts/src/
 forge-std/=lib/forge-std/src/
 openzeppelin-contracts/=lib/openzeppelin-contracts/
+solmate/=lib/extractoor-contracts/lib/solmate/src/
