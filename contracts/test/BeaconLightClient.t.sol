@@ -77,11 +77,11 @@ contract BeaconLightClientTest is Test {
 			json.readBytes32(".finalizedHeader.stateRoot"),
 			json.readBytes32(".finalizedHeader.bodyRoot")
 		);
-		bytes32 executionStateRoot = json.readBytes32("executionStateRoot");
-		bytes32[] memory executionStateRootBranch = json.readBytes32Array("executionStateRootBranch");
-		bytes32 nextSyncCommitteeRoot = json.readBytes32("nextSyncCommitteeRoot");
-		bytes32[] memory nextSyncCommitteeBranch = json.readBytes32Array("nextSyncCommitteeBranch");
-		bytes32[] memory finalityBranch = json.readBytes32Array("finalityBranch");
+		bytes32 executionStateRoot = json.readBytes32(".executionStateRoot");
+		bytes32[] memory executionStateRootBranch = json.readBytes32Array(".executionStateRootBranch");
+		bytes32 nextSyncCommitteeRoot = json.readBytes32(".nextSyncCommitteeRoot");
+		bytes32[] memory nextSyncCommitteeBranch = json.readBytes32Array(".nextSyncCommitteeBranch");
+		bytes32[] memory finalityBranch = json.readBytes32Array(".finalityBranch");
 		uint256[2] memory a = [uint256(0), uint256(0)];
 		uint256[2][2] memory b = [[uint256(0), uint256(0)], [uint256(0), uint256(0)]];
 		uint256[2] memory c = [uint256(0), uint256(0)];
