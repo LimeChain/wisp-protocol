@@ -20,21 +20,21 @@ contract BeaconLightClientTest is Test {
 		bytes32 startSyncCommitteeRoot,
 		bytes32 startSyncCommitteePoseidon
 		) = readNetworkConfig("goerli");
-
+		// TODO fix forkVersion
 		lightClient = new BeaconLightClient(
 			genesisValidatorRoot,
 			genesisTime,
 			secondsPerSlot,
-			forkVersion,
+			0x02001020,
 			startSyncCommitteePeriod,
 			startSyncCommitteeRoot,
 			startSyncCommitteePoseidon);
+		vm.warp(1999999999);
 	}
 
 	function testStep() external {
-		LightClientUpdate memory lcUpdate = readLightClientUpdateTestData("goerli", "5009856");
-		// TODO fix syncCommitteeRoot + Poseidon map
-//		lightClient.step(lcUpdate);
+		LightClientUpdate memory lcUpdate = readLightClientUpdateTestData("goerli", "5032608");
+		lightClient.step(lcUpdate);
 	}
 
 	function readNetworkConfig(string memory network) public view
@@ -50,14 +50,12 @@ contract BeaconLightClientTest is Test {
 		forkVersion = bytes4(json.parseRaw(".forkVersion"));
 		period = json.readUint(".startSyncCommitteePeriod");
 		scRoot = json.readBytes32(".startSyncCommitteeRoot");
-		scpRoot = json.readBytes32(".startSyncCommitteePoseidon");
+		scpRoot = bytes32(json.readUint(".startSyncCommitteePoseidon"));
 	}
 
 	function readLightClientUpdateTestData(string memory network, string memory slot) public view returns (LightClientUpdate memory) {
-		string memory root = vm.projectRoot();
-		string memory path = string.concat(root, "/test/data/lightClientUpdate/", network, "/", slot, ".json");
+		string memory path = string.concat(vm.projectRoot(), "/test/data/lightClientUpdate/", network, "/", slot, ".json");
 		string memory json = vm.readFile(path);
-
 
 		BeaconBlockHeader memory attestedHeader = BeaconBlockHeader(
 			uint64(json.readUint(".attestedHeader.slot")),
@@ -78,8 +76,18 @@ contract BeaconLightClientTest is Test {
 		bytes32 nextSyncCommitteeRoot = json.readBytes32("nextSyncCommitteeRoot");
 		bytes32[] memory nextSyncCommitteeBranch = json.readBytes32Array("nextSyncCommitteeBranch");
 		bytes32[] memory finalityBranch = json.readBytes32Array("finalityBranch");
-		bytes memory updateBytes = json.parseRaw(".signature.proof");
-		Groth16Proof memory proof = abi.decode(updateBytes, (Groth16Proof));
+		uint256[2] memory a = [uint256(0), uint256(0)];
+		uint256[2][2] memory b = [[uint256(0), uint256(0)], [uint256(0), uint256(0)]];
+		uint256[2] memory c = [uint256(0), uint256(0)];
+		a[0] = json.readUint(".signature.proof.a[0]");
+		a[1] = json.readUint(".signature.proof.a[1]");
+		b[0][0] = json.readUint(".signature.proof.b[0][0]");
+		b[0][1] = json.readUint(".signature.proof.b[0][1]");
+		b[1][0] = json.readUint(".signature.proof.b[1][0]");
+		b[1][1] = json.readUint(".signature.proof.b[1][1]");
+		c[0] = json.readUint(".signature.proof.c[0]");
+		c[1] = json.readUint(".signature.proof.c[1]");
+		Groth16Proof memory proof = Groth16Proof(a, b, c);
 		uint64 participation = uint64(json.readUint(".signature.participation"));
 		BLSAggregatedSignature memory signature = BLSAggregatedSignature(participation, proof);
 		return LightClientUpdate(

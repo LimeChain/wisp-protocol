@@ -206,7 +206,7 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
     *   BLSVerify(aggregatedPublicKey, signature) == true
     */
     function zkBLSVerify(bytes32 signingRoot, bytes32 syncCommitteeRoot, uint256 claimedParticipation, Groth16Proof memory proof) internal view returns (bool) {
-        require(sszToPoseidon[syncCommitteeRoot] != 0, "Must map SSZ commitment to Posedion commitment");
+        require(sszToPoseidon[syncCommitteeRoot] != 0, "Must map SSZ commitment to Poseidon commitment");
         uint256[34] memory inputs;
         inputs[0] = claimedParticipation;
         inputs[1] = uint256(sszToPoseidon[syncCommitteeRoot]);
