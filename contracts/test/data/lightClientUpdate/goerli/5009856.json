@@ -1,0 +1,60 @@
+{
+    "attestedHeader": {
+        "slot": 5009920,
+        "proposerIndex": 42858,
+        "parentRoot": "0xc983161db34a6182ff115dc5239d9924f2befe28fb719352c0c9b54097c3c97c",
+        "stateRoot": "0xd7c576f057b668ed4258f66ea87310a599aff61c508cc723f541910dc60356e3",
+        "bodyRoot": "0x0e4be5b5e349fdb413c56434153f690505eb044ffee15485e8155150c9cba0eb"
+    },
+    "finalityBranch": [
+        "0x8e63020000000000000000000000000000000000000000000000000000000000",
+        "0x68cc535d27d2588a5e73e84d3c9b628a9a46ca7a336fe95e25f9e5da1e033a90",
+        "0x51977168e3a05e5bd1f7351e63e3f82f86867cb61c78e1e22b2094a9e0a0c319",
+        "0x79f7a3f30a630f18eb03e277d112c9646652ab6ed5a64e7ba053baf9a08609c1",
+        "0x15a38246ec503443ccc1eb007f2919c2e18ce3ec57312e69c3e951ceda4652ba",
+        "0x2cac4e7368977af13f6724bb4db2c035d64b36f6ec2fbd4eda998d98f37054a7"
+    ],
+    "nextSyncCommitteeRoot": "",
+    "nextSyncCommitteeBranch": [],
+    "executionStateRoot": "0x86e24fbbeeb5b7d7a517d73ce93f4f75e9a276d362bddbd3c565c0f79c5ea732",
+    "finalizedHeader": {
+        "slot": 5009856,
+        "proposerIndex": 117504,
+        "parentRoot": "0x7bf2f79d7f6c32974b340377869475de5452149f99ab7f94aa565d411253f13f",
+        "stateRoot": "0x6a27f8bfdad3bacbf90196cfe5d2b2950318dde9b24f07c48d2fb9a7d1a3a0e8",
+        "bodyRoot": "0x401e2d44198525e0397bf507f632afd27b311d8d2608287f50adda82e394000d"
+    },
+    "executionStateRootBranch": [
+        "0x91fcdaeda24684ce30fe010d968700b18e5263db1e18dba572e3d7865474b03c",
+        "0x2ea8b50a57b4ab25ce72b6f88cbc3323780e542e47f3e967fd909b9a76005684",
+        "0x55e439aa7249dc87a22d8471a4054716af63fc6f850b3e87fd6839fc66090fc3",
+        "0x68a9b85c3f0b2a5504ffe5ca5d9a040b73e1d8b6780c7dfd9b66a0862b2821eb",
+        "0x7205f3650045c08690eb2599d528233bcd1234ec2a584b517985e253d20c1cc4",
+        "0xf5a5fd42d16a20302798ef6ed309979b43003d2320d9f0e8ea9831a92759fb4b",
+        "0xdb56114e00fdd4c1f85c892bf35ac9a89289aaecb1ebd0a96cde606a748b5d71",
+        "0x8bbce95380cccf8ecfd4b1323ba7eab07f8595995b2dba642720136daaa8c06a"
+    ],
+    "signature": {
+        "participation": 256,
+        "proof": {
+            "a": [
+                "0x5e28c6de8c8e4c01e1ac7462e187d3f95b2b07b7339cf9f6129767504b9fbf",
+                "0x20afbd712a9ef0d193a6c9b6871d325003733f86a789187fcaac90b8ca36cd34"
+            ],
+            "b": [
+                [
+                    "0x1d1cb93b2da6461f23ece4cea39e9a708c3b91f6552a0418f1f53031ab851d7e",
+                    "0x0181edf9cb63e8e96d57700521ec5e6dce14d1d62da344b2c159f4be074bd64f"
+                ],
+                [
+                    "0x21fba4ac2c63953b78e43a96dd6bdc5c2e2342ce693e6174915a10b73cbf3283",
+                    "0x0b4be7c69d2b84c18e7798c685a0067a58a68c69e712644fb6ba8465cdf95841"
+                ]
+            ],
+            "c": [
+                "0x149729c787f8e9c34588b8d2d29be145be65a31984d15ed36e63ade0d7537587",
+                "0x0c68294d1f3333f8d844cc069274998c94b5d37e415deea37889d881bb6baac1"
+            ]
+        }
+    }
+}
