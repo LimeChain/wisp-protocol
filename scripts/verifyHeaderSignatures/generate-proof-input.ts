@@ -15,22 +15,14 @@ async function generateProofInput(slotStr: string) {
 	const slot = Number(slotStr);
 	const committee = await SyncCommittee.getValidatorsPubKey(slot);
 	const beaconBlockHeader = await BeaconChainAPI.getBeaconBlockHeader(slot);
-	console.log(beaconBlockHeader);
 	// Sync Committee Bitmask and Signatures for slot X are at slot x+1
 	const syncCommitteeAggregateData = await BeaconChainAPI.getSyncCommitteeAggregateData(slot + 1);
 	const genesisValidatorRoot = await BeaconChainAPI.getGenesisValidatorRoot();
-	console.log("genesis validator root", genesisValidatorRoot);
 	const forkVersion = await BeaconChainAPI.getForkVersion(slot);
-	console.log("Fork version", forkVersion);
 	const signingRoot = computeSigningRoot(forkVersion, genesisValidatorRoot, beaconBlockHeader);
 	const syncCommitteeBits = SyncCommittee.getSyncCommitteeBits(syncCommitteeAggregateData.sync_committee_bits);
 
-	console.log("BEACON BLOCKL HEADER", beaconBlockHeader);
-	console.log("SyncCommittee BITS", syncCommitteeBits);
-	console.log("Sync Signature", syncCommitteeAggregateData.sync_committee_signature)
-
 	await verifyBLSSignature(ethers.utils.arrayify(signingRoot), committee.pubKeys, syncCommitteeAggregateData.sync_committee_signature, syncCommitteeBits)
-	console.log("SigningRoot", signingRoot);
 	const proofInput = {
 		signing_root: Utils.hexToIntArray(signingRoot),
 		pubkeys: committee.pubKeysInt,
@@ -64,8 +56,6 @@ async function verifyBLSSignature(signingRoot: Uint8Array, pubKeys: PublicKey[],
 function computeSigningRoot(forkVersion: string, genesisValidatorRoot: string, beaconBlock: any): string {
 	const sszHeader = sszBeaconBlockHeader(beaconBlock);
 	const domain = computeDomain(forkVersion, genesisValidatorRoot);
-	console.log("DOMAIN", domain);
-	console.log("SSZ HEADER", sszHeader);
 	return ethers.utils.sha256(Buffer.concat([ethers.utils.arrayify(sszHeader), domain]));
 }
 
