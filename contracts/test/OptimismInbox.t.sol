@@ -12,6 +12,15 @@ contract MockLightClient is SimpleLightClient {
     constructor(address owner) SimpleLightClient(owner) {}
 }
 
+contract MockTargetReceiver is IMessageReceiver {
+    function receiveMessage(CRCTypes.CRCMessageEnvelope calldata envelope)
+        external
+        returns (bool success)
+    {
+        return true;
+    }
+}
+
 contract OptimismInboxTest is Test {
     OptimismInbox public inbox;
 
@@ -94,6 +103,10 @@ contract OptimismInboxTest is Test {
                 proofsBlob: inclusionProofsBlob
             });
 
+        MockTargetReceiver _targetReceiver = new MockTargetReceiver();
+        bytes memory code = address(_targetReceiver).code;
+        vm.etch(messageTarget, code);
+
         vm.chainId(destinationChainId);
         inbox.receiveMessage(
             envelope,
@@ -139,8 +152,115 @@ contract OptimismInboxTest is Test {
                 proofsBlob: inclusionProofsBlob
             });
 
+        MockTargetReceiver _targetReceiver = new MockTargetReceiver();
+        bytes memory code = address(_targetReceiver).code;
+        vm.etch(messageTarget, code);
+
         vm.chainId(destinationChainId + 1);
         vm.expectRevert("Message is not intended for this network");
+        inbox.receiveMessage(
+            envelope,
+            targetL1BlockNum,
+            outputIndex,
+            outputMPTProof,
+            inclusionProof
+        );
+    }
+
+    function testRevertOnReplayReceive() public {
+        CRCTypes.CRCMessage memory message = CRCTypes.CRCMessage({
+            version: protocolVersion,
+            destinationChainId: destinationChainId,
+            nonce: messageNonce,
+            user: sender,
+            target: messageTarget,
+            payload: payload,
+            stateRelayFee: stateRelayFee,
+            deliveryFee: deliveryFee,
+            extra: extra
+        });
+        CRCTypes.CRCMessageEnvelope memory envelope = CRCTypes
+            .CRCMessageEnvelope({message: message, sender: sender});
+
+        OptimismTypes.OutputRootProof memory outputProof = OptimismTypes
+            .OutputRootProof({
+                stateRoot: optimismStateRoot,
+                withdrawalStorageRoot: withdrawalStorageRoot,
+                latestBlockhash: latestBlockhash
+            });
+
+        OptimismTypes.OutputRootMPTProof memory outputMPTProof = OptimismTypes
+            .OutputRootMPTProof({
+                outputRootProof: outputProof,
+                optimismStateProofsBlob: optimismStateProofsBlob
+            });
+
+        OptimismTypes.MPTInclusionProof memory inclusionProof = OptimismTypes
+            .MPTInclusionProof({
+                target: target,
+                slotPosition: slotPosition,
+                proofsBlob: inclusionProofsBlob
+            });
+
+        MockTargetReceiver _targetReceiver = new MockTargetReceiver();
+        bytes memory code = address(_targetReceiver).code;
+        vm.etch(messageTarget, code);
+
+        vm.chainId(destinationChainId);
+        inbox.receiveMessage(
+            envelope,
+            targetL1BlockNum,
+            outputIndex,
+            outputMPTProof,
+            inclusionProof
+        );
+
+        vm.expectRevert("Message already received");
+        inbox.receiveMessage(
+            envelope,
+            targetL1BlockNum,
+            outputIndex,
+            outputMPTProof,
+            inclusionProof
+        );
+    }
+
+    function testTransactionSucceedsOnWrongMessageTarget() public {
+        CRCTypes.CRCMessage memory message = CRCTypes.CRCMessage({
+            version: protocolVersion,
+            destinationChainId: destinationChainId,
+            nonce: messageNonce,
+            user: sender,
+            target: messageTarget,
+            payload: payload,
+            stateRelayFee: stateRelayFee,
+            deliveryFee: deliveryFee,
+            extra: extra
+        });
+        CRCTypes.CRCMessageEnvelope memory envelope = CRCTypes
+            .CRCMessageEnvelope({message: message, sender: sender});
+
+        OptimismTypes.OutputRootProof memory outputProof = OptimismTypes
+            .OutputRootProof({
+                stateRoot: optimismStateRoot,
+                withdrawalStorageRoot: withdrawalStorageRoot,
+                latestBlockhash: latestBlockhash
+            });
+
+        OptimismTypes.OutputRootMPTProof memory outputMPTProof = OptimismTypes
+            .OutputRootMPTProof({
+                outputRootProof: outputProof,
+                optimismStateProofsBlob: optimismStateProofsBlob
+            });
+
+        OptimismTypes.MPTInclusionProof memory inclusionProof = OptimismTypes
+            .MPTInclusionProof({
+                target: target,
+                slotPosition: slotPosition,
+                proofsBlob: inclusionProofsBlob
+            });
+
+        vm.chainId(destinationChainId);
         inbox.receiveMessage(
             envelope,
             targetL1BlockNum,

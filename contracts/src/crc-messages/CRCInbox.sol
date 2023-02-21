@@ -4,11 +4,16 @@ pragma solidity ^0.8.13;
 import {Types as CRCTypes} from "./libraries/Types.sol";
 
 abstract contract CRCInbox {
+    event InvokeSuccess(address indexed target, bytes32 indexed hash);
+    event InvokeFailure(address indexed target, bytes32 indexed hash);
+
     event MessageReceived(
         address indexed user,
         address indexed target,
         bytes32 indexed hash
     );
+
+    mapping(bytes32 => bool) public isUsed;
 
     function getMessageHash(CRCTypes.CRCMessageEnvelope calldata envelope)
         public
