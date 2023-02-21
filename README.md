@@ -46,6 +46,11 @@ cd ./contracts && forge install && forge build
 
 In order to run the tests for the contracts execute `forge test`
 
+In order to deploy the `BeaconLightClient` to PolygonZKEVM:
+```bash
+forge script script/BeaconLightClient.s.sol --rpc-url https://rpc.public.zkevm-test.net -vvvv --legacy --broadcast
+```
+
 ### Scripts
 
 The `./scripts` folder contains a npm project supporting 2 scripts
