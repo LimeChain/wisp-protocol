@@ -23,7 +23,6 @@ async function generateProofInput(slotStr: string) {
 	const syncCommitteeBits = SyncCommittee.getSyncCommitteeBits(syncCommitteeAggregateData.sync_committee_bits);
 
 	await verifyBLSSignature(ethers.utils.arrayify(signingRoot), committee.pubKeys, syncCommitteeAggregateData.sync_committee_signature, syncCommitteeBits)
-
 	const proofInput = {
 		signing_root: Utils.hexToIntArray(signingRoot),
 		pubkeys: committee.pubKeysInt,

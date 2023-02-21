@@ -1,7 +1,9 @@
 import axios from "axios";
 import {Utils} from "./utils";
 // TODO put in config
-const BASE_URL = "https://broken-dawn-silence.discover.quiknode.pro/d9cba15931e96ca925a52ebdd0afcbecc127434b"
+// const BASE_URL = "https://broken-dawn-silence.discover.quiknode.pro/d9cba15931e96ca925a52ebdd0afcbecc127434b"
+// TODO Goerli
+const BASE_URL = "https://palpable-cool-log.ethereum-goerli.discover.quiknode.pro/a2bdb6bda9d4ac2c37b1602b558ecfba6438bf7d";
 const BEACON_API_V1 = BASE_URL + `/eth/v1/beacon/`;
 const BEACON_API_V2 = BASE_URL + `/eth/v2/beacon/`;
 const BEACON_BLOCK = `${BEACON_API_V2}blocks/`;
