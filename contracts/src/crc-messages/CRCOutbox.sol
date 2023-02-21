@@ -25,6 +25,7 @@ contract CRCOutbox is ICRCOutbox {
     /// @dev Complete properties of a CRC message used for the hash are
     ///     uint8 - version
     ///     uint256 - destination chainId
+    ///     uint64  - nonce to use against replay attacks
     ///     address - message sender
     ///     address - user - actual sender
     ///     address - target - the target contract in the destination chain

@@ -16,6 +16,9 @@ abstract contract CRCInbox {
     mapping(bytes32 => bool) public isUsed;
     mapping(bytes32 => address) public relayerOf;
 
+    /// @notice generates the message hash of the given envelope
+    /// @param envelope the message to get the hash of
+    /// @return messageHash the message hash of this envelope
     function getMessageHash(CRCTypes.CRCMessageEnvelope calldata envelope)
         public
         pure
@@ -41,6 +44,8 @@ abstract contract CRCInbox {
             );
     }
 
+    /// @notice gets the chainId for this contract network
+    /// @return the chainId
     function getChainID() public view returns (uint256) {
         uint256 id;
         assembly {
@@ -49,6 +54,9 @@ abstract contract CRCInbox {
         return id;
     }
 
+    /// @notice marks the message as relayed and stores the relayer
+    /// @dev marks the msg.sender as the relayer
+    /// @param messageHash the message hash to mark as relayed
     function markMessageRelayed(bytes32 messageHash) internal virtual {
         isUsed[messageHash] = true;
         relayerOf[messageHash] = msg.sender;
