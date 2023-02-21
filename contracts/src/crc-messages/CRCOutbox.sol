@@ -36,7 +36,7 @@ contract CRCOutbox is ICRCOutbox {
         public
         returns (bytes32 messageHash)
     {
-        // TODO add checks
+        // TODO fees checks and takes
         require(
             !noncesNullifier[msg.sender][message.nonce],
             "Nonce already used"

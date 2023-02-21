@@ -115,6 +115,11 @@ contract OptimismInboxTest is Test {
             outputMPTProof,
             inclusionProof
         );
+
+        bytes32 messageHash = inbox.getMessageHash(envelope); // TODO add test for getMessageHash
+
+        assertEq(inbox.isUsed(messageHash), true);
+        assertEq(inbox.relayerOf(messageHash), address(this));
     }
 
     function testRevertOnWrongDestination() public {

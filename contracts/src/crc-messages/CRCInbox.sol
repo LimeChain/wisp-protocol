@@ -14,6 +14,7 @@ abstract contract CRCInbox {
     );
 
     mapping(bytes32 => bool) public isUsed;
+    mapping(bytes32 => address) public relayerOf;
 
     function getMessageHash(CRCTypes.CRCMessageEnvelope calldata envelope)
         public
@@ -46,5 +47,10 @@ abstract contract CRCInbox {
             id := chainid()
         }
         return id;
+    }
+
+    function markMessageRelayed(bytes32 messageHash) internal virtual {
+        isUsed[messageHash] = true;
+        relayerOf[messageHash] = msg.sender;
     }
 }

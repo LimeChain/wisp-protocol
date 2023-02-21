@@ -19,45 +19,14 @@
       "additionalContracts": []
     }
   ],
-  "receipts": [
-    {
-      "transactionHash": "0x82da666125297bf97ff4949840a8a3763d0e23828d616880b6b6263caff2a516",
-      "transactionIndex": "0x0",
-      "blockHash": "0x2b3dede3dd28f1436aaa9910ece11a5159e1f1f161969757ede45a4298456fc9",
-      "blockNumber": "0x4e3f7",
-      "from": "0xe42682eEa1DFC432C2fF5a779CD1D9a1e1c7f405",
-      "to": null,
-      "cumulativeGasUsed": "0x37ffe",
-      "gasUsed": "0x37ffe",
-      "contractAddress": "0xB66Cf648A98Dd3Ef7D0FD41C51A82D33e81A7d0c",
-      "logs": [
-        {
-          "address": "0xB66Cf648A98Dd3Ef7D0FD41C51A82D33e81A7d0c",
-          "topics": [
-            "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
-            "0x0000000000000000000000000000000000000000000000000000000000000000",
-            "0x000000000000000000000000e42682eea1dfc432c2ff5a779cd1d9a1e1c7f405"
-          ],
-          "data": "0x",
-          "blockHash": "0x2b3dede3dd28f1436aaa9910ece11a5159e1f1f161969757ede45a4298456fc9",
-          "blockNumber": "0x4e3f7",
-          "transactionHash": "0x82da666125297bf97ff4949840a8a3763d0e23828d616880b6b6263caff2a516",
-          "transactionIndex": "0x0",
-          "logIndex": "0x8",
-          "removed": false
-        }
-      ],
-      "status": "0x1",
-      "root": "0x890c5d75447acf5d4cf573e07268c93adda7692cc1d0612e909b8b40b7098309",
-      "logsBloom": "0x00000000000000000000000000000000000000000000000004800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000020000000000000000000800000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000001000000000000000000000000000000000000000000000000000000000000000000020000000000000000000800000000002000000000040000000000000000000000000",
-      "type": "0x0"
-    }
-  ],
+  "receipts": [],
   "libraries": [],
-  "pending": [],
+  "pending": [
+    "0x82da666125297bf97ff4949840a8a3763d0e23828d616880b6b6263caff2a516"
+  ],
   "path": "/Users/georgespasov/development/crc/crc-playgrounds/crc-protocol/contracts/broadcast/MockLightClient.sol/1422/run-latest.json",
   "returns": {},
-  "timestamp": 1676974131,
+  "timestamp": 1676974125,
   "chain": 1422,
   "multi": false,
   "commit": "e165223"
