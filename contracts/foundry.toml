@@ -6,6 +6,7 @@ fs_permissions = [{ access = "read", path = "./"}]
 
 [rpc_endpoints]
 goerli = "${GOERLI_RPC_URL}"
+zkevm = "${ZKEVM_RPC_URL}"
 
 [etherscan]
 goerli = { key = "${ETHERSCAN_API_KEY}" }
