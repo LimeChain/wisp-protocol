@@ -19,6 +19,7 @@ contract OptimismInbox is CRCInbox, L2OptimismBedrockStateProver {
         OptimismTypes.OutputRootMPTProof calldata outputProof,
         OptimismTypes.MPTInclusionProof calldata inclusionProof
     ) public virtual returns (bool success) {
+        assert(envelope.message.target != address(this));
         require(
             envelope.message.destinationChainId == getChainID(),
             "Message is not intended for this network"
@@ -27,7 +28,7 @@ contract OptimismInbox is CRCInbox, L2OptimismBedrockStateProver {
         bytes32 messageHash = getMessageHash(envelope);
 
         require(!isUsed[messageHash], "Message already received");
-        isUsed[messageHash] = true;
+        markMessageRelayed(messageHash);
 
         proveInOptimismState(
             blockNumber,
