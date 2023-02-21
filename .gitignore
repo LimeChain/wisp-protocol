@@ -10,3 +10,5 @@
 MyLogFile.log
 /contracts/.env
 /contracts/broadcast/
+.vscode
+*/.env

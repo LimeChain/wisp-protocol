@@ -7,3 +7,6 @@
 [submodule "circuits/utils/circom-pairing"]
 	path = circuits/utils/circom-pairing
 	url = https://github.com/LimeChain/circom-pairing
+[submodule "contracts/lib/extractoor-contracts"]
+	path = contracts/lib/extractoor-contracts
+	url = https://github.com/LimeChain/extractoor-contracts

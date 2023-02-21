@@ -10,3 +10,4 @@ zkevm = "${ZKEVM_RPC_URL}"
 
 [etherscan]
 goerli = { key = "${ETHERSCAN_API_KEY}" }
+optimism-goerli = { key = "${OPTIMISM_ETHERSCAN_API_KEY}" }
