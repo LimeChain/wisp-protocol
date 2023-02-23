@@ -42,5 +42,5 @@ interface ICRCOutbox {
     function getMessageByIndex(uint256 index)
         public
         view
-        returns (Types.CRCMessage memory message)
+        returns (Types.CRCMessage memory message);
 }
