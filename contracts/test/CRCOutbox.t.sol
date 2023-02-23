@@ -70,6 +70,25 @@ contract CRCOutboxTest is Test {
         assertEq(outbox.outbox(0), messageHash);
         assertEq(outbox.indexOf(messageHash), 0);
         assertEq(outbox.noncesNullifier(address(this), nonce), true);
+
+        Types.CRCMessage memory savedMessage = outbox.getMessageByIndex(0);
+
+        bytes32 messageHashFromSaved = keccak256(
+            abi.encode(
+                savedMessage.version,
+                savedMessage.destinationChainId,
+                savedMessage.nonce,
+                address(this),
+                savedMessage.user,
+                savedMessage.target,
+                savedMessage.payload,
+                savedMessage.stateRelayFee,
+                savedMessage.deliveryFee,
+                savedMessage.extra
+            )
+        );
+
+        assertEq(messageHashFromSaved, messageHash);
     }
 
     function testRevertingReplay(
