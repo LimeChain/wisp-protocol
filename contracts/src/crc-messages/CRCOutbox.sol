@@ -8,6 +8,9 @@ contract CRCOutbox is ICRCOutbox {
     /// @dev outbox for messages
     bytes32[] public outbox;
 
+    /// @dev raw version of the messages
+    Types.CRCMessage[] public rawMessages;
+
     /// @dev getting index by the message hash
     mapping(bytes32 => uint256) public indexOf;
 
@@ -64,6 +67,7 @@ contract CRCOutbox is ICRCOutbox {
 
         outbox.push(messageHash);
         indexOf[messageHash] = messageIndex;
+        rawMessages.push(message);
 
         emit MessageSent(
             msg.sender,
@@ -73,5 +77,13 @@ contract CRCOutbox is ICRCOutbox {
         );
 
         return messageHash;
+    }
+
+    function getMessageByIndex(uint256 index)
+        public
+        view
+        returns (Types.CRCMessage memory message)
+    {
+        return rawMessages[index];
     }
 }
