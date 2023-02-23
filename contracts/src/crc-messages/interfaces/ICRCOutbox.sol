@@ -35,4 +35,12 @@ interface ICRCOutbox {
     function sendMessage(Types.CRCMessage calldata message)
         external
         returns (bytes32 messageHash);
+
+    /// @notice gets CRC Message by its index
+    /// @param index the index of the message in the outbox
+    /// @return message the raw CRC Message
+    function getMessageByIndex(uint256 index)
+        public
+        view
+        returns (Types.CRCMessage memory message)
 }
