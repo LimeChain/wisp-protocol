@@ -40,7 +40,7 @@ interface ICRCOutbox {
     /// @param index the index of the message in the outbox
     /// @return message the raw CRC Message
     function getMessageByIndex(uint256 index)
-        public
+        external
         view
         returns (Types.CRCMessage memory message);
 }
