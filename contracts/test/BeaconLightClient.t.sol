@@ -35,12 +35,12 @@ contract BeaconLightClientTest is Test {
 
 	function testStep() external {
 		LightClientUpdate memory lcUpdate = readLightClientUpdateTestData("goerli", "lightClientUpdate", "5082560");
-		lightClient.step(lcUpdate);
+		lightClient.update(lcUpdate);
 	}
 
 	function testSyncCommitteeUpdate() external {
 		(LightClientUpdate memory lcUpdate, bytes32 nexSCPoseidon, Groth16Proof memory proof) = readLCUpdateWithSyncCommittee("goerli", "5082560");
-		lightClient.updateSyncCommittee(lcUpdate, nexSCPoseidon, proof);
+		lightClient.updateWithSyncCommittee(lcUpdate, nexSCPoseidon, proof);
 	}
 
 	function readNetworkConfig(string memory network)
