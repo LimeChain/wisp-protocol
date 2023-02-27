@@ -33,6 +33,10 @@ contract OptimismInbox is CRCInbox, L2OptimismBedrockStateProver {
             "Message is not intended for this network"
         );
 
+        uint256 sourceChainId = sourceChainIdFor[inclusionProof.target];
+
+        require(sourceChainId > 0, "Unrecognized CRCOutbox contract");
+
         bytes32 messageHash = getMessageHash(envelope);
 
         require(!isUsed[messageHash], "Message already received");
@@ -49,7 +53,8 @@ contract OptimismInbox is CRCInbox, L2OptimismBedrockStateProver {
         (bool callSuccess, bytes memory data) = envelope.message.target.call(
             abi.encodeWithSelector(
                 IMessageReceiver.receiveMessage.selector,
-                envelope
+                envelope,
+                sourceChainId
             )
         );
 

@@ -10,3 +10,6 @@
 [submodule "contracts/lib/extractoor-contracts"]
 	path = contracts/lib/extractoor-contracts
 	url = https://github.com/LimeChain/extractoor-contracts
+[submodule "contracts/lib/solmate"]
+	path = contracts/lib/solmate
+	url = https://github.com/transmissions11/solmate
