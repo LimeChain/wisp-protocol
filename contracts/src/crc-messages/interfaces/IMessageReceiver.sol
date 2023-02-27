@@ -6,7 +6,8 @@ import {Types} from "./../libraries/Types.sol";
 interface IMessageReceiver {
     /// @notice receives CRCMessageEnvelope
     /// @param envelope the message envelope you are receiving
-    function receiveMessage(Types.CRCMessageEnvelope calldata envelope)
-        external
-        returns (bool success);
+    function receiveMessage(
+        Types.CRCMessageEnvelope calldata envelope,
+        uint256 sourceChainId
+    ) external returns (bool success);
 }

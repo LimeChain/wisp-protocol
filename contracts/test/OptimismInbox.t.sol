@@ -13,10 +13,10 @@ contract MockLightClient is SimpleLightClient {
 }
 
 contract MockTargetReceiver is IMessageReceiver {
-    function receiveMessage(CRCTypes.CRCMessageEnvelope calldata envelope)
-        external
-        returns (bool success)
-    {
+    function receiveMessage(
+        CRCTypes.CRCMessageEnvelope calldata envelope,
+        uint256 sourceChainId
+    ) external returns (bool success) {
         return true;
     }
 }

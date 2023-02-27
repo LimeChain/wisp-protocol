@@ -53,7 +53,8 @@ contract OptimismInbox is CRCInbox, L2OptimismBedrockStateProver {
         (bool callSuccess, bytes memory data) = envelope.message.target.call(
             abi.encodeWithSelector(
                 IMessageReceiver.receiveMessage.selector,
-                envelope
+                envelope,
+                sourceChainId
             )
         );
 
