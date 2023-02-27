@@ -38,6 +38,7 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
     mapping(bytes32 => bytes32) public sszToPoseidon;
 
     event HeadUpdate(uint256 indexed slot, bytes32 indexed root);
+    event ExecutionStateRootUpdate(uint64 indexed slot, bytes32 indexed executionRoot);
     event OptimisticHeadUpdate(uint256 indexed slot, bytes32 indexed root, uint256 indexed participation);
     event SyncCommitteeUpdate(uint256 indexed period, bytes32 indexed root);
 
@@ -84,7 +85,7 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
     *   2) A valid merkle proof for the finalized header inside the currently attested header
     */
     function step(LightClientUpdate memory update) external isActive {
-        (BeaconBlockHeader memory activeHeader, bool isFinalized,) = processLightClientUpdate(update);
+        (BeaconBlockHeader memory activeHeader, bool isFinalized,,) = processLightClientUpdate(update);
         require(activeHeader.slot > head, "Update slot must be greater than the current head");
         require(activeHeader.slot <= getCurrentSlot(), "Update slot is too far in the future");
         if (isFinalized) {
@@ -100,7 +101,7 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
     * best optimistic update. It can be finalized via forceUpdate(...).
     */
     function updateSyncCommittee(LightClientUpdate memory update, bytes32 nextSyncCommitteePoseidon, Groth16Proof memory commitmentMappingProof) external isActive {
-        (BeaconBlockHeader memory activeHeader, bool isFinalized, uint64 participation) = processLightClientUpdate(update);
+        (BeaconBlockHeader memory activeHeader, bool isFinalized, uint64 participation, bool hasExecutionStateRootProof) = processLightClientUpdate(update);
         uint64 currentPeriod = getSyncCommitteePeriodFromSlot(activeHeader.slot);
         require(syncCommitteeRootByPeriod[currentPeriod + 1] == 0, "Next sync committee was already initialized");
 
@@ -116,6 +117,10 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
 
         if (isFinalized) {
             setSyncCommitteeRoot(currentPeriod + 1, update.nextSyncCommitteeRoot);
+            setHead(activeHeader);
+            if (hasExecutionStateRootProof) {
+                setExecutionStateRoot(activeHeader.slot, update.executionStateRoot);
+            }
         } else {
             if (activeHeader.slot >= optimisticHeader.slot) {
                 require(participation > optimisticParticipation, "Not the best optimistic update");
@@ -144,7 +149,7 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
     *   4) Verifies that the light client update has update.signature.participation signatures from the current sync committee with a zkSNARK
     *   5) If it's finalized, checks for 2n/3+1 signatures. If it's not, checks for at least MIN_SYNC_COMMITTEE_PARTICIPANTS and that it is the best update
     */
-    function processLightClientUpdate(LightClientUpdate memory update) internal view returns (BeaconBlockHeader memory, bool, uint64) {
+    function processLightClientUpdate(LightClientUpdate memory update) internal view returns (BeaconBlockHeader memory, bool, uint64, bool) {
         bool hasFinalityProof = update.finalityBranch.length > 0;
         bool hasExecutionStateRootProof = update.executionStateRootBranch.length > 0;
         BeaconBlockHeader memory activeHeader = hasFinalityProof ? update.finalizedHeader : update.attestedHeader;
@@ -180,7 +185,7 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
             require(update.signature.participation > MIN_SYNC_COMMITTEE_PARTICIPANTS, "Not enough members of the sync committee signed");
         }
 
-        return (activeHeader, hasFinalityProof, update.signature.participation);
+        return (activeHeader, hasFinalityProof, update.signature.participation, hasExecutionStateRootProof);
     }
 
     /*
@@ -226,6 +231,7 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
 
     function setExecutionStateRoot(uint64 slot, bytes32 _executionStateRoot) internal {
         executionStateRoots[slot] = _executionStateRoot;
+        emit ExecutionStateRootUpdate(slot, _executionStateRoot);
     }
 
     function setOptimisticHead(BeaconBlockHeader memory header, bytes32 nextSyncCommitteeRoot, bytes32 _executionStateRoot, uint64 participation) internal {

@@ -1,13 +1,13 @@
-# CRC Protocol
+# Wisp Protocol
 
-[![Tests](https://github.com/LimeChain/crc-protocol/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/LimeChain/crc-protocol/actions/workflows/ci.yml)
+[![Tests](https://github.com/LimeChain/wisp-protocol/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/LimeChain/crc-protocol/actions/workflows/ci.yml)
 
 ## Overview
 
 Messaging Protocol for transfer of data between Rollups based on Computational Integrity (SNARK/STARKs) proving the
 state of Ethereum (acting as an on-chain Light Client) inside the Destination rollup.
 
-For the PoC version of CRC, the circuits and the on-chain Light Client are based
+For the PoC version of Wisp, the circuits and the on-chain Light Client are based
 on [SuccinctLabs Proof-of-Consensus](https://github.com/succinctlabs/eth-proof-of-consensus) implementation.
 
 ## Getting Started
