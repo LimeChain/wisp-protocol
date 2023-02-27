@@ -16,6 +16,16 @@ abstract contract CRCInbox {
     mapping(bytes32 => bool) public isUsed;
     mapping(bytes32 => address) public relayerOf;
 
+    /// @notice Maps address of CRCOutbox in a certain source rollup or chain to its chainId
+    mapping(address => uint256) public sourceChainIdFor;
+
+    /// @notice Sets the chainid for CRCOutbox
+    function setChainIdFor(address outbox, uint256 chainId) public {
+        // TODO add security
+        // TODO in the future this should be improved as ideally outbox contracts have the same address on multiple networks
+        sourceChainIdFor[outbox] = chainId;
+    }
+
     /// @notice generates the message hash of the given envelope
     /// @param envelope the message to get the hash of
     /// @return messageHash the message hash of this envelope

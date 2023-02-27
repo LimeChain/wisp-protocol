@@ -52,7 +52,8 @@ contract OptimismInboxTest is Test {
     bytes32 public constant latestBlockhash =
         0x77a309c22c569bf77d4062865ffccf1a1e9e96cf66b566a085638e58c103999a;
 
-    address public constant target = 0xcA7B05255F52C700AE25C278DdB03C02459F7AE8;
+    address public constant crcOutboxAddress =
+        0xcA7B05255F52C700AE25C278DdB03C02459F7AE8;
     bytes32 public constant slotPosition =
         0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e564;
 
@@ -66,6 +67,7 @@ contract OptimismInboxTest is Test {
         MockLightClient _lightClient = new MockLightClient(address(this));
         _lightClient.setStateRoot(targetL1BlockNum, targetL1StateRoot);
         inbox = new OptimismInbox(address(_lightClient), outputOracleAddress);
+        inbox.setChainIdFor(crcOutboxAddress, 5);
     }
 
     function testReceiveMessage() public {
@@ -98,7 +100,7 @@ contract OptimismInboxTest is Test {
 
         OptimismTypes.MPTInclusionProof memory inclusionProof = OptimismTypes
             .MPTInclusionProof({
-                target: target,
+                target: crcOutboxAddress,
                 slotPosition: slotPosition,
                 proofsBlob: inclusionProofsBlob
             });
@@ -152,7 +154,7 @@ contract OptimismInboxTest is Test {
 
         OptimismTypes.MPTInclusionProof memory inclusionProof = OptimismTypes
             .MPTInclusionProof({
-                target: target,
+                target: crcOutboxAddress,
                 slotPosition: slotPosition,
                 proofsBlob: inclusionProofsBlob
             });
@@ -202,7 +204,7 @@ contract OptimismInboxTest is Test {
 
         OptimismTypes.MPTInclusionProof memory inclusionProof = OptimismTypes
             .MPTInclusionProof({
-                target: target,
+                target: crcOutboxAddress,
                 slotPosition: slotPosition,
                 proofsBlob: inclusionProofsBlob
             });
@@ -260,7 +262,7 @@ contract OptimismInboxTest is Test {
 
         OptimismTypes.MPTInclusionProof memory inclusionProof = OptimismTypes
             .MPTInclusionProof({
-                target: target,
+                target: crcOutboxAddress,
                 slotPosition: slotPosition,
                 proofsBlob: inclusionProofsBlob
             });
