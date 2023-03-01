@@ -15,10 +15,10 @@ contract DeployLightClient is Script {
 		uint256 goerliSecondsPerSlot = uint256(12);
 		bytes4 goerliForkVersion = bytes4(0x02001020);
 
-		// Important! The following script will deploy a Goerli Beacon Light Client starting from Period 620 (27 Feb 2023)
-		uint256 goerliStartSyncCommitteePeriod = uint256(620);
-		bytes32 goerliStartSyncCommitteeRoot = bytes32(0x454677fb351d04ceb9cc7ebfacfd3006f6f45ae3df14a602a7315f201b2bd022);
-		bytes32 goerliStartSyncCommitteePoseidon = bytes32(uint256(1510457210206483705960711289730781220511670661511175082123243556470181199943));
+		// Important! The following script will deploy a Goerli Beacon Light Client starting from Period 622 (1 March 2023)
+		uint256 goerliStartSyncCommitteePeriod = uint256(622);
+		bytes32 goerliStartSyncCommitteeRoot = 0x3e550c1ec5b6ce738f0f377dad7dabb3db732075bb2f716617bd2670326f51e2;
+		bytes32 goerliStartSyncCommitteePoseidon = bytes32(uint256(15723372587160775010106261491283302547283441397492210875652651465207522176490));
 
 		BeaconLightClient lightClient = new BeaconLightClient(
 			goerliGenesisValidatorRoot,

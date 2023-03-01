@@ -15,6 +15,7 @@ uint256 constant SYNC_COMMITTEE_SIZE = 512;
 uint256 constant FINALIZED_ROOT_INDEX = 105;
 uint256 constant NEXT_SYNC_COMMITTEE_INDEX = 55;
 uint256 constant EXECUTION_STATE_ROOT_INDEX = 402;
+uint256 constant BLOCK_NUMBER_ROOT_INDEX = 406;
 
 contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignatureVerifier, Ownable {
     bytes32 public immutable GENESIS_VALIDATORS_ROOT;
@@ -23,21 +24,17 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
 
     bool public active;
     bytes4 public defaultForkVersion;
-    uint64 public head;
+    uint64 public headSlot;
+    uint64 public headBlockNumber;
+    uint256 public latestSyncCommitteePeriod;
+
+    mapping(uint64 => uint64) public slot2block;
     mapping(uint64 => bytes32) public executionStateRoots;
-
-    BeaconBlockHeader public optimisticHeader;
-    bytes32 public optimisticNextSyncCommitteeRoot;
-    bytes32 public optimisticNextSyncCommitteePoseidon;
-    bytes32 public optimisticExecutionStateRoot;
-    uint64 public optimisticParticipation;
-    uint64 public optimisticTimeout;
-
     mapping(uint256 => bytes32) public syncCommitteeRootByPeriod;
     mapping(bytes32 => bytes32) public sszToPoseidon;
 
-    event HeadUpdate(uint256 indexed slot, bytes32 indexed root);
-    event SyncCommitteeUpdate(uint256 indexed period, bytes32 indexed root);
+    event HeadUpdate(uint64 indexed slot, uint64 indexed blockNumber, bytes32 indexed executionRoot);
+    event SyncCommitteeUpdate(uint64 indexed period, bytes32 indexed root);
 
     constructor(
         bytes32 genesisValidatorsRoot,
@@ -52,6 +49,7 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
         GENESIS_TIME = genesisTime;
         SECONDS_PER_SLOT = secondsPerSlot;
         defaultForkVersion = forkVersion;
+        latestSyncCommitteePeriod = startSyncCommitteePeriod;
         syncCommitteeRootByPeriod[startSyncCommitteePeriod] = startSyncCommitteeRoot;
         sszToPoseidon[startSyncCommitteeRoot] = startSyncCommitteePoseidon;
         active = true;
@@ -84,12 +82,14 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
     }
 
     function _update(LightClientUpdate calldata update) internal {
-        require(update.finalizedHeader.slot > head, "Update slot must be greater than the current head");
+        require(update.finalizedHeader.slot > headSlot, "Update slot must be greater than the current head");
         require(update.finalizedHeader.slot <= getCurrentSlot(), "Update slot is too far in the future");
 
-        head = update.finalizedHeader.slot;
-        executionStateRoots[update.finalizedHeader.slot] = update.executionStateRoot;
-        emit HeadUpdate(update.finalizedHeader.slot, update.executionStateRoot);
+        headSlot = update.finalizedHeader.slot;
+        headBlockNumber = update.blockNumber;
+        slot2block[update.finalizedHeader.slot] = update.blockNumber;
+        executionStateRoots[update.blockNumber] = update.executionStateRoot;
+        emit HeadUpdate(update.finalizedHeader.slot, update.blockNumber, update.executionStateRoot);
     }
     /*
     * @dev Set the sync committee validator set root for the next sync committee period. This root is signed by the current
@@ -115,6 +115,7 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
 
         zkMapSSZToPoseidon(update.nextSyncCommitteeRoot, nextSyncCommitteePoseidon, commitmentMappingProof);
 
+        latestSyncCommitteePeriod = nextPeriod;
         syncCommitteeRootByPeriod[nextPeriod] = update.nextSyncCommitteeRoot;
         emit SyncCommitteeUpdate(nextPeriod, update.nextSyncCommitteeRoot);
     }
@@ -144,6 +145,13 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
                 update.executionStateRootBranch,
                 update.finalizedHeader.bodyRoot
             ), "Execution state root proof is invalid");
+        require(SimpleSerialize.isValidMerkleBranch(
+                SimpleSerialize.toLittleEndian(update.blockNumber),
+                BLOCK_NUMBER_ROOT_INDEX,
+                update.blockNumberBranch,
+                update.finalizedHeader.bodyRoot
+            ), "Block number proof is invalid");
+
         require(3 * update.signature.participation > 2 * SYNC_COMMITTEE_SIZE, "Not enough members of the sync committee signed");
 
         uint64 currentPeriod = getSyncCommitteePeriodFromSlot(update.finalizedHeader.slot);
