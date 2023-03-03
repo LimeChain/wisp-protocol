@@ -17,13 +17,6 @@ contract CRCOutbox is ICRCOutbox {
     /// @dev used to nullify nonces
     mapping(address => mapping(uint64 => bool)) public noncesNullifier;
 
-    event MessageSent(
-        address indexed sender,
-        uint256 indexed destinationChainId,
-        bytes32 indexed hash,
-        uint256 messageIndex
-    );
-
     /// @notice sends CRC message. Stores it as keccak hash inside the outbox
     /// @dev Complete properties of a CRC message used for the hash are
     ///     uint8 - version

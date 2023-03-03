@@ -4,6 +4,13 @@ pragma solidity ^0.8.13;
 import {Types} from "./../libraries/Types.sol";
 
 interface ICRCOutbox {
+    event MessageSent(
+        address indexed sender,
+        uint256 indexed destinationChainId,
+        bytes32 indexed hash,
+        uint256 messageIndex
+    );
+
     /// @notice getter for message hashes based on their index
     /// @param outboxIndex the index in the outbox of the message whose hash will be returned
     /// @return messageHash the hash of the message for this outboxIndex

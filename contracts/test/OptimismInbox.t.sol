@@ -21,6 +21,15 @@ contract MockTargetReceiver is IMessageReceiver {
     }
 }
 
+contract FailingTargetReceiver is IMessageReceiver {
+    function receiveMessage(
+        CRCTypes.CRCMessageEnvelope calldata envelope,
+        uint256 sourceChainId
+    ) external returns (bool success) {
+        payable(0x0).transfer(1 ether);
+    }
+}
+
 contract OptimismInboxTest is Test {
     OptimismInbox public inbox;
 
@@ -275,5 +284,59 @@ contract OptimismInboxTest is Test {
             outputMPTProof,
             inclusionProof
         );
+    }
+
+    function testTransactionSucceedsOnRevertingTarget() public {
+        CRCTypes.CRCMessage memory message = CRCTypes.CRCMessage({
+            version: protocolVersion,
+            destinationChainId: destinationChainId,
+            nonce: messageNonce,
+            user: sender,
+            target: messageTarget,
+            payload: payload,
+            stateRelayFee: stateRelayFee,
+            deliveryFee: deliveryFee,
+            extra: extra
+        });
+        CRCTypes.CRCMessageEnvelope memory envelope = CRCTypes
+            .CRCMessageEnvelope({message: message, sender: sender});
+
+        OptimismTypes.OutputRootProof memory outputProof = OptimismTypes
+            .OutputRootProof({
+                stateRoot: optimismStateRoot,
+                withdrawalStorageRoot: withdrawalStorageRoot,
+                latestBlockhash: latestBlockhash
+            });
+
+        OptimismTypes.OutputRootMPTProof memory outputMPTProof = OptimismTypes
+            .OutputRootMPTProof({
+                outputRootProof: outputProof,
+                optimismStateProofsBlob: optimismStateProofsBlob
+            });
+
+        OptimismTypes.MPTInclusionProof memory inclusionProof = OptimismTypes
+            .MPTInclusionProof({
+                target: crcOutboxAddress,
+                slotPosition: slotPosition,
+                proofsBlob: inclusionProofsBlob
+            });
+
+        FailingTargetReceiver _targetReceiver = new FailingTargetReceiver();
+        bytes memory code = address(_targetReceiver).code;
+        vm.etch(messageTarget, code);
+
+        vm.chainId(destinationChainId);
+        inbox.receiveMessage(
+            envelope,
+            targetL1BlockNum,
+            outputIndex,
+            outputMPTProof,
+            inclusionProof
+        );
+
+        bytes32 messageHash = inbox.getMessageHash(envelope);
+
+        assertEq(inbox.isUsed(messageHash), true);
+        assertEq(inbox.relayerOf(messageHash), address(this));
     }
 }
