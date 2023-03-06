@@ -26,6 +26,7 @@ CIRCUIT_PATH=../../circuits/verify_ssz_to_poseidon_commitment/$CIRCUIT_NAME.circ
 OUTPUT_DIR=$COMPILED_DIR/$CIRCUIT_NAME_cpp
 run() {
   echo "SYNC_COMMITTEE_PERIOD: $SYNC_COMMITTEE_PERIOD"
+  echo "Node URL: $BEACON_NODE_API"
 
   if [ ! -d "$BUILD_DIR" ]; then
     echo "No build directory found. Creating build directory..."
@@ -50,7 +51,7 @@ run() {
   echo "====GENERATING INPUT FOR PROOF===="
   echo $SYNC_COMMITTEE_PROOF/input.json
   start=$(date +%s)
-  yarn ts-node --project tsconfig.json ./syncCommitteeComittment/generate-proof-input.ts --period ${SYNC_COMMITTEE_PERIOD}
+  BEACON_NODE_API=$BEACON_NODE_API yarn ts-node --project tsconfig.json ./syncCommitteeComittment/generate-proof-input.ts --period ${SYNC_COMMITTEE_PERIOD}
   end=$(date +%s)
   echo "DONE ($((end - start))s)"
 
