@@ -7,7 +7,7 @@
 Messaging Protocol for transfer of data between Rollups based on Computational Integrity (SNARK) proving the
 state of Ethereum (acting as an on-chain Light Client) inside the Destination rollup.
 
-For the PoC version of Wisp, the circuits and the on-chain Light Client are based
+For the PoC version of Wisp, the circuits and the on-chain Light Client are modified and based
 on [SuccinctLabs Proof-of-Consensus](https://github.com/succinctlabs/eth-proof-of-consensus) implementation.
 
 ## Directory Structure
@@ -27,4 +27,4 @@ More information for each of them:
 
 ## License
 
-TODO
+The code in this project is licensed under the [GNU GPLv3 license](LICENSE)
