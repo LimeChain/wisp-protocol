@@ -7,6 +7,8 @@ import {L2OptimismBedrockStateProver} from "extractoor-contracts/L2/optimism/L2O
 import {Types as OptimismTypes} from "extractoor-contracts/library/optimism/Types.sol";
 import {IMessageReceiver} from "./../../interfaces/IMessageReceiver.sol";
 
+/// @notice Inbox contract for Optimism Bedrock rollups like Optimism and Base
+/// @author Perseverance
 contract OptimismInbox is CRCInbox, L2OptimismBedrockStateProver {
     constructor(address _lightClient, address _oracleAddress)
         L2OptimismBedrockStateProver(_lightClient, _oracleAddress)

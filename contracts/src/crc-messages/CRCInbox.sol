@@ -4,6 +4,8 @@ pragma solidity ^0.8.13;
 import {Types as CRCTypes} from "./libraries/Types.sol";
 import {Owned} from "solmate/auth/Owned.sol";
 
+/// @notice Abstract contract used as foundation for an inbox. Adds common functions and mappings.
+/// @author Perseverance
 abstract contract CRCInbox is Owned {
     event InvokeSuccess(address indexed target, bytes32 indexed hash);
     event InvokeFailure(address indexed target, bytes32 indexed hash);
@@ -14,7 +16,10 @@ abstract contract CRCInbox is Owned {
         bytes32 indexed hash
     );
 
+    /// @notice used for marking messages as used and protect against replay
     mapping(bytes32 => bool) public isUsed;
+
+    /// @notice used for marking the relayer of a certain message
     mapping(bytes32 => address) public relayerOf;
 
     /// @notice Maps address of CRCOutbox in a certain source rollup or chain to its chainId

@@ -4,6 +4,9 @@ pragma solidity ^0.8.13;
 import {ICRCOutbox} from "./interfaces/ICRCOutbox.sol";
 import {Types} from "./libraries/Types.sol";
 
+/// @notice Contract used for sending messages across rollups.
+/// Defines an outbox whose elements gets proven inside the destination rollup
+/// @author Perseverance
 contract CRCOutbox is ICRCOutbox {
     /// @dev outbox for messages
     bytes32[] public outbox;
@@ -72,6 +75,9 @@ contract CRCOutbox is ICRCOutbox {
         return messageHash;
     }
 
+    /// @notice Returns the sent message by its index in the outbox
+    /// @param index - the index in the outbox array
+    /// @return message - the sent message
     function getMessageByIndex(uint256 index)
         public
         view

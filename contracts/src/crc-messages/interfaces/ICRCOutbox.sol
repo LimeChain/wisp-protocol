@@ -3,6 +3,8 @@ pragma solidity ^0.8.13;
 
 import {Types} from "./../libraries/Types.sol";
 
+/// @notice Interface for external contracts to work with the outbox
+/// @author Perseverance
 interface ICRCOutbox {
     event MessageSent(
         address indexed sender,

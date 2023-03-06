@@ -1,14 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-/**
- * @title Types
- * @notice Contains various types used throughout the Optimism contract system.
- */
+/// @notice Contains the messages types used within the protocol
+/// @author Perseverance
 library Types {
-    /**
-     * @notice Input structure for sending a CRC message
-     */
+    /// @notice Input structure for sending a CRC message
     struct CRCMessage {
         uint8 version; // Version of the protocol this message confirms to
         uint256 destinationChainId; // The “chain id” of the network this message is intended for
@@ -21,9 +17,7 @@ library Types {
         bytes extra; // Arbitrary bytes that will be sent alongside the data for dapps to make sense of
     }
 
-    /**
-     * @notice Complete CRCMessage envelop including the sender. Used upon receiving of CRCMessages
-     */
+    /// @notice Complete CRCMessage envelop including the sender. Used upon receiving of CRCMessages
     struct CRCMessageEnvelope {
         CRCMessage message; // CRC Message
         address sender; // The sender of the message
