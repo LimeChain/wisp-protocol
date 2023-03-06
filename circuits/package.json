@@ -1,8 +1,8 @@
 {
-  "name": "crc-circuits",
+  "name": "wisp-circuits",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "git@github.com:LimeChain/crc-protocol.git",
+  "repository": "git@github.com:LimeChain/wisp-protocol.git",
   "author": "\"\"",
   "license": "MIT",
   "scripts": {

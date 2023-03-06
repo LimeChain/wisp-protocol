@@ -27,5 +27,7 @@ struct LightClientUpdate {
     bytes32[] nextSyncCommitteeBranch;
     bytes32 executionStateRoot;
     bytes32[] executionStateRootBranch;
+    uint64 blockNumber;
+    bytes32[] blockNumberBranch;
     BLSAggregatedSignature signature;
 }

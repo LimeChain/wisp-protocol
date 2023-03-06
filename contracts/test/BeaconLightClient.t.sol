@@ -12,13 +12,13 @@ contract BeaconLightClientTest is Test {
 
     function setUp() public {
         (
-            bytes32 genesisValidatorRoot,
-            uint256 genesisTime,
-            uint256 secondsPerSlot,
-            bytes4 forkVersion,
-            uint256 startSyncCommitteePeriod,
-            bytes32 startSyncCommitteeRoot,
-            bytes32 startSyncCommitteePoseidon
+        bytes32 genesisValidatorRoot,
+        uint256 genesisTime,
+        uint256 secondsPerSlot,
+        bytes4 forkVersion,
+        uint256 startSyncCommitteePeriod,
+        bytes32 startSyncCommitteeRoot,
+        bytes32 startSyncCommitteePoseidon
         ) = readNetworkConfig("goerli");
         // TODO fix forkVersion
         lightClient = new BeaconLightClient(
@@ -34,34 +34,27 @@ contract BeaconLightClientTest is Test {
     }
 
     function testStep() external {
-        LightClientUpdate memory lcUpdate = readLightClientUpdateTestData(
-            "goerli",
-            "5032608"
-        );
-        lightClient.step(lcUpdate);
+        LightClientUpdate memory lcUpdate = readLightClientUpdateTestData("goerli", "lightClientUpdate", "5097760");
+        lightClient.update(lcUpdate);
     }
 
-    function testInvalidStepDueToMissingMajority() external {
-        LightClientUpdate memory lcUpdate = readLightClientUpdateTestData(
-            "goerli",
-            "5032672"
-        );
-        vm.expectRevert("Not enough members of the sync committee signed");
-        lightClient.step(lcUpdate);
+    function testSyncCommitteeUpdate() external {
+        (LightClientUpdate memory lcUpdate, bytes32 nexSCPoseidon, Groth16Proof memory proof) = readLCUpdateWithSyncCommittee("goerli", "5097760");
+        lightClient.updateWithSyncCommittee(lcUpdate, nexSCPoseidon, proof);
     }
 
     function readNetworkConfig(string memory network)
-        public
-        view
-        returns (
-            bytes32 genesisValidatorRoot,
-            uint256 genesisTime,
-            uint256 secondsPerSlot,
-            bytes4 forkVersion,
-            uint256 period,
-            bytes32 scRoot,
-            bytes32 scpRoot
-        )
+    public
+    view
+    returns (
+        bytes32 genesisValidatorRoot,
+        uint256 genesisTime,
+        uint256 secondsPerSlot,
+        bytes4 forkVersion,
+        uint256 period,
+        bytes32 scRoot,
+        bytes32 scpRoot
+    )
     {
         string memory root = vm.projectRoot();
         string memory path = string.concat(
@@ -81,18 +74,33 @@ contract BeaconLightClientTest is Test {
         scpRoot = bytes32(json.readUint(".startSyncCommitteePoseidon"));
     }
 
+    function readLCUpdateWithSyncCommittee(string memory network, string memory slot) public view returns (LightClientUpdate memory, bytes32 syncCommitteePoseidon, Groth16Proof memory proof)  {
+        LightClientUpdate memory lcUpdate = readLightClientUpdateTestData(network, "ssz2Poseidon", slot);
+
+        string memory path = string.concat(vm.projectRoot(), "/test/data/ssz2Poseidon/", network, "/", slot, ".json");
+        string memory json = vm.readFile(path);
+        bytes32 nextSyncCommitteePoseidon = json.readBytes32(".nextSyncCommitteePoseidon");
+        uint256[2] memory a = [uint256(0), uint256(0)];
+        uint256[2][2] memory b = [[uint256(0), uint256(0)], [uint256(0), uint256(0)]];
+        uint256[2] memory c = [uint256(0), uint256(0)];
+        a[0] = json.readUint(".ssz2PoseidonProof.a[0]");
+        a[1] = json.readUint(".ssz2PoseidonProof.a[1]");
+        b[0][0] = json.readUint(".ssz2PoseidonProof.b[0][0]");
+        b[0][1] = json.readUint(".ssz2PoseidonProof.b[0][1]");
+        b[1][0] = json.readUint(".ssz2PoseidonProof.b[1][0]");
+        b[1][1] = json.readUint(".ssz2PoseidonProof.b[1][1]");
+        c[0] = json.readUint(".ssz2PoseidonProof.c[0]");
+        c[1] = json.readUint(".ssz2PoseidonProof.c[1]");
+        Groth16Proof memory proof = Groth16Proof(a, b, c);
+        return (lcUpdate, nextSyncCommitteePoseidon, proof);
+    }
+
     function readLightClientUpdateTestData(
         string memory network,
+        string memory fileName,
         string memory slot
     ) public view returns (LightClientUpdate memory) {
-        string memory path = string.concat(
-            vm.projectRoot(),
-            "/test/data/lightClientUpdate/",
-            network,
-            "/",
-            slot,
-            ".json"
-        );
+        string memory path = string.concat(vm.projectRoot(), "/test/data/", fileName, "/", network, "/", slot, ".json");
         string memory json = vm.readFile(path);
 
         BeaconBlockHeader memory attestedHeader = BeaconBlockHeader(
@@ -113,6 +121,10 @@ contract BeaconLightClientTest is Test {
         bytes32[] memory executionStateRootBranch = json.readBytes32Array(
             ".executionStateRootBranch"
         );
+        uint64 blockNumber = uint64(json.readUint(".blockNumber"));
+        bytes32[] memory blockNumberBranch = json.readBytes32Array(
+            ".blockNumberBranch"
+        );
         bytes32 nextSyncCommitteeRoot = json.readBytes32(
             ".nextSyncCommitteeRoot"
         );
@@ -122,10 +134,27 @@ contract BeaconLightClientTest is Test {
         bytes32[] memory finalityBranch = json.readBytes32Array(
             ".finalityBranch"
         );
+
+        BLSAggregatedSignature memory signature = buildSignatureObject(json);
+        return LightClientUpdate(
+            attestedHeader,
+            finalizedHeader,
+            finalityBranch,
+            nextSyncCommitteeRoot,
+            nextSyncCommitteeBranch,
+            executionStateRoot,
+            executionStateRootBranch,
+            blockNumber,
+            blockNumberBranch,
+            signature
+        );
+    }
+
+    function buildSignatureObject(string memory json) public view returns (BLSAggregatedSignature memory) {
         uint256[2] memory a = [uint256(0), uint256(0)];
         uint256[2][2] memory b = [
-            [uint256(0), uint256(0)],
-            [uint256(0), uint256(0)]
+        [uint256(0), uint256(0)],
+        [uint256(0), uint256(0)]
         ];
         uint256[2] memory c = [uint256(0), uint256(0)];
         a[0] = json.readUint(".signature.proof.a[0]");
@@ -136,26 +165,14 @@ contract BeaconLightClientTest is Test {
         b[1][1] = json.readUint(".signature.proof.b[1][1]");
         c[0] = json.readUint(".signature.proof.c[0]");
         c[1] = json.readUint(".signature.proof.c[1]");
+
         Groth16Proof memory proof = Groth16Proof(a, b, c);
         uint64 participation = uint64(
             json.readUint(".signature.participation")
         );
-        BLSAggregatedSignature memory signature = BLSAggregatedSignature(
+        return BLSAggregatedSignature(
             participation,
             proof
         );
-        return
-            LightClientUpdate(
-                attestedHeader,
-                finalizedHeader,
-                finalityBranch,
-                nextSyncCommitteeRoot,
-                nextSyncCommitteeBranch,
-                executionStateRoot,
-                executionStateRootBranch,
-                signature
-            );
     }
-
-    // todo readSSZ2PoseidonData
 }

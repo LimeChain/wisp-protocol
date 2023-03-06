@@ -3,7 +3,7 @@
     "genesisTime": 1616508000,
     "secondsPerSlot": 12,
     "forkVersion": "0x02001020",
-    "startSyncCommitteePeriod": 614,
-    "startSyncCommitteeRoot": "0xf0f16518ff627161463f841297c7706ef553ba9ee543914e9bad705b3698e7ad",
-    "startSyncCommitteePoseidon": 4766846997200404508116312410723043006238551660690027408290116075840455429660
+    "startSyncCommitteePeriod": 622,
+    "startSyncCommitteeRoot": "0x3e550c1ec5b6ce738f0f377dad7dabb3db732075bb2f716617bd2670326f51e2",
+    "startSyncCommitteePoseidon": 15723372587160775010106261491283302547283441397492210875652651465207522176490
 }
