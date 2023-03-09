@@ -1,21 +1,22 @@
 import axios from "axios";
 import {Utils} from "./utils";
-// TODO put in config
-// const BASE_URL = "https://broken-dawn-silence.discover.quiknode.pro/d9cba15931e96ca925a52ebdd0afcbecc127434b"
-// TODO Goerli
-const BASE_URL = "https://palpable-cool-log.ethereum-goerli.discover.quiknode.pro/a2bdb6bda9d4ac2c37b1602b558ecfba6438bf7d";
-const BEACON_API_V1 = BASE_URL + `/eth/v1/beacon/`;
-const BEACON_API_V2 = BASE_URL + `/eth/v2/beacon/`;
-const BEACON_BLOCK = `${BEACON_API_V2}blocks/`;
-const BEACON_BLOCK_HEADER = `${BEACON_API_V1}headers/`;
+
+const BEACON_API_V1 = `/eth/v1/beacon/`;
+const BEACON_API_V2 = `/eth/v2/beacon/`;
 const PUB_KEY_BATCH_SIZE = 100;
 
-export namespace BeaconChainAPI {
+export class BeaconChainAPI {
 
-	export async function getSyncCommitteePubKeys(slot: number) {
-		const result = await axios.get(`${BEACON_API_V1}states/${slot}/sync_committees`);
+	private readonly baseUrl: string;
+
+	constructor() {
+		this.baseUrl = process.env.BEACON_NODE_API || "";
+	}
+
+	async getSyncCommitteePubKeys(slot: number) {
+		const result = await axios.get(`${this.baseUrl}${BEACON_API_V1}states/${slot}/sync_committees`);
 		const committee = result.data.data.validators;
-		const url = `${BEACON_API_V1}states/${slot}/validators?id=`;
+		const url = `${this.baseUrl}${BEACON_API_V1}states/${slot}/validators?id=`;
 		const validator2PubKey = new Map<string, string>();
 		for (let i = 0; i < Math.ceil(committee.length / PUB_KEY_BATCH_SIZE); i++) {
 			const validatorIndices = committee.slice(i * PUB_KEY_BATCH_SIZE, (i + 1) * PUB_KEY_BATCH_SIZE);
@@ -30,14 +31,14 @@ export namespace BeaconChainAPI {
 		return committee.map((validatorIndex: string) => validator2PubKey.get(validatorIndex));
 	}
 
-	export async function getBeaconBlockHeader(slotN: number): Promise<BeaconBlockHeader> {
-		const result = await axios.get(BEACON_BLOCK_HEADER + slotN);
+	async getBeaconBlockHeader(slotN: number): Promise<BeaconBlockHeader> {
+		const result = await axios.get(this.baseUrl + BEACON_API_V1 + `headers/` + slotN);
 		const {slot, proposer_index, parent_root, state_root, body_root} = result.data.data.header.message;
 		return {slot, proposer_index, parent_root, state_root, body_root};
 	}
 
-	export async function getSyncCommitteeAggregateData(slotN: number) {
-		const result = await axios.get(BEACON_BLOCK + slotN, {
+	async getSyncCommitteeAggregateData(slotN: number) {
+		const result = await axios.get(this.baseUrl + BEACON_API_V2 + `blocks/` + slotN, {
 			headers: {
 				accept: 'application/json'
 			}
@@ -49,13 +50,13 @@ export namespace BeaconChainAPI {
 		};
 	}
 
-	export async function getGenesisValidatorRoot() {
-		const result = await axios.get(BEACON_API_V1 + "genesis");
+	async getGenesisValidatorRoot() {
+		const result = await axios.get(this.baseUrl + BEACON_API_V1 + "genesis");
 		return result.data.data['genesis_validators_root'];
 	}
 
-	export async function getForkVersion(slot: number) {
-		const result = await axios.get(BEACON_API_V1 + `states/${slot}/fork`);
+	async getForkVersion(slot: number) {
+		const result = await axios.get(this.baseUrl + BEACON_API_V1 + `states/${slot}/fork`);
 		return result.data.data['current_version'];
 	}
 }

@@ -4,10 +4,17 @@ import {BeaconChainAPI} from "./beacon-chain-api";
 import {PublicKey }  from "@chainsafe/bls/blst-native";
 import {fromHexString} from "@chainsafe/ssz";
 
-export namespace SyncCommittee {
+export class SyncCommittee {
 
-	export async function getValidatorsPubKey(slot: number) {
-		const committeePubKeys = await BeaconChainAPI.getSyncCommitteePubKeys(slot);
+	private readonly beaconAPI: BeaconChainAPI;
+
+	constructor(beaconAPI: BeaconChainAPI) {
+		this.beaconAPI = beaconAPI;
+	}
+
+
+	async getValidatorsPubKey(slot: number) {
+		const committeePubKeys = await this.beaconAPI.getSyncCommitteePubKeys(slot);
 
 		const pubKeys: PublicKey[] = [];
 		const pubKeysInt = [];
@@ -31,18 +38,18 @@ export namespace SyncCommittee {
 		}
 	}
 
-	export function getSyncCommitteeBits(aggregatedBits: string) {
+	getSyncCommitteeBits(aggregatedBits: string) {
 		let aggregatedBitsString: any[] = [];
 		aggregatedBits = Utils.remove0x(aggregatedBits);
 		for (let i = 0; i < aggregatedBits.length; i = i + 2) {
 			let uint8Bits = parseInt(aggregatedBits[i] + aggregatedBits[i + 1], 16).toString(2);
-			uint8Bits = padBitsToUint8Length(uint8Bits);
+			uint8Bits = this.padBitsToUint8Length(uint8Bits);
 			aggregatedBitsString = aggregatedBitsString.concat(uint8Bits.split('').reverse());
 		}
 		return aggregatedBitsString.map(bit => { return !!Number(bit) });
 	}
 
-	function padBitsToUint8Length(str: string): string {
+	padBitsToUint8Length(str: string): string {
 		while (str.length < 8) {
 			str = '0' + str;
 		}

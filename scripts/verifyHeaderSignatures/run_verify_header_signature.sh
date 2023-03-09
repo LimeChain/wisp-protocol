@@ -1,13 +1,11 @@
 #!/bin/bash
 
 # High level steps:
-# 1. TODO
-# 2. TODO
-# 3. Compiles the circuit (if not compiled)
-# 4. Generates a witness
-# 5. Generates a trusted setup (if not generated)
-# 6. Generates a proof
-# 7. Generates TX calldata for the verifier contract (`step`)
+# 1. Compiles the circuit (if not compiled)
+# 2. Generates a witness
+# 3. Generates a trusted setup (if not generated)
+# 4. Generates a proof
+# 5. Generates TX calldata for the verifier contract (`step`)
 
 set -e
 
@@ -27,6 +25,7 @@ OUTPUT_DIR=$COMPILED_DIR/$CIRCUIT_NAME_cpp
 
 run() {
   echo "SLOT: $SLOT"
+  echo "Node URL: $BEACON_NODE_API"
 
   if [ ! -d "$BUILD_DIR" ]; then
     echo "No build directory found. Creating build directory..."
@@ -51,7 +50,7 @@ run() {
   echo "====GENERATING INPUT FOR PROOF===="
   echo $SLOT_PROOF/input.json
   start=$(date +%s)
-  yarn ts-node --project tsconfig.json ./verifyHeaderSignatures/generate-proof-input.ts --slot $SLOT
+  BEACON_NODE_API=$BEACON_NODE_API yarn ts-node --project tsconfig.json ./verifyHeaderSignatures/generate-proof-input.ts --slot $SLOT
   end=$(date +%s)
   echo "DONE ($((end - start))s)"
 

@@ -12,15 +12,18 @@ async function generateProofInput(slotStr: string) {
 	if (!(slotStr == 'latest' || !isNaN(Number(slotStr)))) {
 		throw new Error('Slot is invalid. Must be `latest` or number');
 	}
+	const beaconAPI = new BeaconChainAPI();
+	const syncCommittee = new SyncCommittee(beaconAPI);
+
 	const slot = Number(slotStr);
-	const committee = await SyncCommittee.getValidatorsPubKey(slot);
-	const beaconBlockHeader = await BeaconChainAPI.getBeaconBlockHeader(slot);
+	const committee = await syncCommittee.getValidatorsPubKey(slot);
+	const beaconBlockHeader = await beaconAPI.getBeaconBlockHeader(slot);
 	// Sync Committee Bitmask and Signatures for slot X are at slot x+1
-	const syncCommitteeAggregateData = await BeaconChainAPI.getSyncCommitteeAggregateData(slot + 1);
-	const genesisValidatorRoot = await BeaconChainAPI.getGenesisValidatorRoot();
-	const forkVersion = await BeaconChainAPI.getForkVersion(slot);
+	const syncCommitteeAggregateData = await beaconAPI.getSyncCommitteeAggregateData(slot + 1);
+	const genesisValidatorRoot = await beaconAPI.getGenesisValidatorRoot();
+	const forkVersion = await beaconAPI.getForkVersion(slot);
 	const signingRoot = computeSigningRoot(forkVersion, genesisValidatorRoot, beaconBlockHeader);
-	const syncCommitteeBits = SyncCommittee.getSyncCommitteeBits(syncCommitteeAggregateData.sync_committee_bits);
+	const syncCommitteeBits = syncCommittee.getSyncCommitteeBits(syncCommitteeAggregateData.sync_committee_bits);
 
 	await verifyBLSSignature(ethers.utils.arrayify(signingRoot), committee.pubKeys, syncCommitteeAggregateData.sync_committee_signature, syncCommitteeBits)
 	const proofInput = {
