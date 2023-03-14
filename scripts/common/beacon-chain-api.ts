@@ -1,8 +1,9 @@
 import axios from "axios";
 import {Utils} from "./utils";
+import * as lodestar from '@lodestar/types';
 
 const BEACON_API_V1 = `/eth/v1/beacon/`;
-const BEACON_API_V2 = `/eth/v2/beacon/`;
+const BEACON_STATE_API = `/eth/v2/debug/beacon/states`;
 const PUB_KEY_BATCH_SIZE = 100;
 
 export class BeaconChainAPI {
@@ -38,7 +39,7 @@ export class BeaconChainAPI {
 	}
 
 	async getSyncCommitteeAggregateData(slotN: number) {
-		const result = await axios.get(this.baseUrl + BEACON_API_V2 + `blocks/` + slotN, {
+		const result = await axios.get(this.baseUrl + BEACON_API_V1 + `blocks/` + slotN, {
 			headers: {
 				accept: 'application/json'
 			}
@@ -50,6 +51,15 @@ export class BeaconChainAPI {
 		};
 	}
 
+	async getBeaconBlock(slotN: number) {
+		const result = await axios.get(this.baseUrl + BEACON_API_V1 + `blocks/` + slotN, {
+			headers: {
+				accept: 'application/json'
+			}
+		});
+		return lodestar.ssz.bellatrix.BeaconBlockBody.fromJson(result.data.data.message.body);
+	}
+
 	async getGenesisValidatorRoot() {
 		const result = await axios.get(this.baseUrl + BEACON_API_V1 + "genesis");
 		return result.data.data['genesis_validators_root'];
@@ -58,6 +68,12 @@ export class BeaconChainAPI {
 	async getForkVersion(slot: number) {
 		const result = await axios.get(this.baseUrl + BEACON_API_V1 + `states/${slot}/fork`);
 		return result.data.data['current_version'];
+	}
+
+	async getBeaconState(slot: number) {
+		const response = await fetch(`${this.baseUrl + BEACON_STATE_API}/${slot}`);
+		const beaconState = (await response.json())['data'];
+		return lodestar.ssz.bellatrix.BeaconState.fromJson(beaconState);
 	}
 }
 

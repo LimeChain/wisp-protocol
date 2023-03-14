@@ -4,11 +4,9 @@ import {SyncCommittee} from "../common/sync-committee";
 import {bls, PublicKey} from "@chainsafe/bls/blst-native";
 import {BitArray, fromHexString} from "@chainsafe/ssz";
 import {ethers} from "ethers";
-import minimist from "minimist";
-import fs from "fs";
 
-async function generateProofInput(slotStr: string) {
-	console.log(`Generating Input data for proving that slot: ${slotStr}`);
+export async function generateInputForProof(slotStr: string) {
+	console.log(`Generating Input data for proving slot: ${slotStr}`);
 	if (!(slotStr == 'latest' || !isNaN(Number(slotStr)))) {
 		throw new Error('Slot is invalid. Must be `latest` or number');
 	}
@@ -26,29 +24,30 @@ async function generateProofInput(slotStr: string) {
 	const syncCommitteeBits = syncCommittee.getSyncCommitteeBits(syncCommitteeAggregateData.sync_committee_bits);
 
 	await verifyBLSSignature(ethers.utils.arrayify(signingRoot), committee.pubKeys, syncCommitteeAggregateData.sync_committee_signature, syncCommitteeBits)
+	let participation = 0;
+	const pubkeybits = syncCommitteeBits.map(e => {
+		if (e) {
+			participation++;
+			return 1;
+		} else {
+			return 0;
+		}
+	})
 	const proofInput = {
 		signing_root: Utils.hexToIntArray(signingRoot),
 		pubkeys: committee.pubKeysInt,
-		pubkeybits: syncCommitteeBits.map(e => { return e ? 1: 0}),
+		pubkeybits,
 		signature: Utils.sigHexAsSnarkInput(syncCommitteeAggregateData.sync_committee_signature)
 	}
-
-	// Write object to a block specific folder in circuits directory.
-	const dir = `../circuits/verify_header_signatures/proof_data_${slot}`;
-	if (!fs.existsSync(dir)) {
-		fs.mkdirSync(dir);
-	}
-	const file = `../circuits/verify_header_signatures/proof_data_${slot}/input.json`;
-	fs.writeFileSync(
-		file,
-		JSON.stringify(proofInput)
-	);
-	console.log("Finished writing proof input file", file);
+	return {slot, proofInput, participation};
 }
 
 async function verifyBLSSignature(signingRoot: Uint8Array, pubKeys: PublicKey[], aggregateSyncCommitteeSignature: string, bitmap: boolean[]) {
 	const bits = BitArray.fromBoolArray(bitmap);
 	const activePubKeys = bits.intersectValues<PublicKey>(pubKeys);
+	if (activePubKeys.length <= (512 * 2) /3) {
+		throw new Error(`No majority reached for this slot`);
+	}
 	const aggPubkey = bls.PublicKey.aggregate(activePubKeys);
 	const sig = bls.Signature.fromBytes(fromHexString(aggregateSyncCommitteeSignature), undefined, true);
 	const success = sig.verify(aggPubkey, signingRoot);
@@ -90,13 +89,3 @@ function computeDomain(forkVersionStr: string, genesisValidatorsRootStr: string)
 	domain.set(right.slice(0, 28), 4);
 	return domain;
 }
-
-const argv = minimist(process.argv.slice(1));
-const slotArg = argv.slot || process.env.SLOT;
-
-if (!slotArg) {
-	throw new Error("CLI arg 'slot' is required!")
-}
-
-// usage: yarn ts-node generate-proof-input.ts --slot=4278368
-generateProofInput(slotArg);

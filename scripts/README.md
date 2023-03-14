@@ -49,3 +49,11 @@ cd ./verifyHeaderSignatures && SLOT={SLOT} BEACON_NODE_API={BEACON_NODE_API} bas
 
 Start the processes in the background since it might take a while depending on whether you've compiled / generated the
 zkey. A `logs` folder for the execution will be created.
+
+### Update SyncCommittee for already deployed contract
+
+```
+PROVER_API={PROVER} BEACON_NODE_API={BEACON_NODE} LIGHT_CLIENT={LIGHT_CLIENT_ADDRESS} yarn ts-node --project tsconfig.json ./updateSyncCommitteeOfContract/index.ts --period {PERIOD} --slot {optional} --rpcUrl {RPC URL} --privateKey {PK}
+```
+
+By default, the slot to be used is the first slot after 2 epochs. If the slot does not have >66% sync committee participation, provide another slot as argument (`--slot`)
